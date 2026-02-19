@@ -2,7 +2,7 @@
 name: html-visual
 version: 0.0.1
 category: design-frontend
-description: "Generates interactive HTML visualizations — UI mockups, ERDs, flowcharts, charts, slides, architecture diagrams, dashboards, timelines, mindmaps, kanban boards, tables, wireframes. Use when the user asks to visualize, mock up, diagram, chart, create ERD, generate slides, architecture diagram, dashboard, timeline, mindmap, kanban, table, wireframe, or interactive HTML."
+description: "Generate an interactive single-file HTML visualization (mockup, wireframe, ERD, flowchart, chart, slides, architecture diagram, dashboard, timeline, mindmap, kanban, table)."
 argument-hint: "[type] <content>"
 ---
 
@@ -38,6 +38,8 @@ Determine the type from the first argument (`$0`).
 
 **No match**: Infer the type from the request content. If unable to infer, ask the user.
 When inferred, use `visual-{name}.html` as the filename.
+
+**`{name}` rule**: Extract the core noun from the request and convert to kebab-case. e.g., "user login form" → `login-form`, "payment flow" → `payment-flow`.
 
 ### Input Handling
 

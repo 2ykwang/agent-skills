@@ -61,19 +61,19 @@ This template provides **structure only**. Colors, fonts, and tone should be fre
   </style>
 </head>
 <body>
-  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+  <button class="theme-toggle" aria-label="Toggle theme">
     <span class="theme-icon">🌙</span>
   </button>
 
   <!-- {content} -->
 
   <script>
-    function toggleTheme() {
+    document.querySelector('.theme-toggle').addEventListener('click', () => {
       const html = document.documentElement;
       const isDark = html.dataset.theme === 'dark';
       html.dataset.theme = isDark ? 'light' : 'dark';
       document.querySelector('.theme-icon').textContent = isDark ? '☀️' : '🌙';
-    }
+    });
   </script>
 </body>
 </html>
