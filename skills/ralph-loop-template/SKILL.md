@@ -1,6 +1,6 @@
 ---
 name: ralph-loop-template
-version: 0.0.1
+version: 0.0.2
 category: development
 description: Generates iterable checklist PROMPT files for Ralph Loop from plan files or current context, and provides the /ralph-loop execution command.
 requires: "[ralph-wiggum](https://github.com/anthropics/claude-code/tree/main/plugins/ralph-wiggum)"
