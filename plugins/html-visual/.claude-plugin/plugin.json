@@ -1,0 +1,12 @@
+{
+  "name": "html-visual",
+  "version": "0.0.1",
+  "description": "Generates interactive HTML visualizations \u2014 UI mockups, ERDs, flowcharts, charts, slides, architecture diagrams, dashboards, timelines, mindmaps, kanban boards, tables, wireframes. Use when the user asks to visualize, mock up, diagram, chart, create ERD, generate slides, architecture diagram, dashboard, timeline, mindmap, kanban, table, wireframe, or interactive HTML.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/html-visual",
+  "license": "MIT"
+}

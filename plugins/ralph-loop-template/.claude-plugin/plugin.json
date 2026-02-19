@@ -1,0 +1,12 @@
+{
+  "name": "ralph-loop-template",
+  "version": "0.0.1",
+  "description": "Generates iterable checklist PROMPT files for Ralph Loop from plan files or current context, and provides the /ralph-loop execution command.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/ralph-loop-template",
+  "license": "MIT"
+}
