@@ -80,6 +80,28 @@ Edit `version` in `skills/<name>/SKILL.md` frontmatter. Run `just generate` to p
 When modifying `scripts/validate.py`, update `tests/test_scripts.py` as well.
 New check logic → add a corresponding test case. Verify with `just test`.
 
+## Commit Rules
+
+[Conventional Commits](https://www.conventionalcommits.org/) format:
+
+```
+<type>(<scope>): <subject>
+```
+
+- **type**: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`
+- **scope**: skill name or module (e.g. `html-visual`, `scripts`). Omit if project-wide
+- **subject**: lowercase, imperative, no period. English only
+- Keep to one line. Add body only when the "why" isn't obvious from the subject
+- Generated output (`plugins/`, `marketplace.json`) changes are included in the same commit — no separate commit
+
+Examples:
+
+```
+feat(html-visual): add name derivation rule
+fix(html-visual): resolve onclick contradiction in boilerplate
+chore: regenerate plugins
+```
+
 ## Conventions
 
 - Folder names: kebab-case
