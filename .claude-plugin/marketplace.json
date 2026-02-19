@@ -8,6 +8,13 @@
   },
   "plugins": [
     {
+      "name": "django-ticket-triage",
+      "source": "./plugins/django-ticket-triage",
+      "description": "Analyze a Django Trac ticket and produce a triage recommendation report.",
+      "version": "0.1.1",
+      "category": "integrations"
+    },
+    {
       "name": "html-visual",
       "source": "./plugins/html-visual",
       "description": "Generate an interactive single-file HTML visualization (mockup, wireframe, ERD, flowchart, chart, slides, architecture diagram, dashboard, timeline, mindmap, kanban, table).",
