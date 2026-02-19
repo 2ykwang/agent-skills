@@ -13,7 +13,7 @@ Files may have changed, so always check the current state first.
    - The next phase is handled in the next iteration.
 2. **Always read files to check current state**: Do not assume results from previous iterations.
 3. **Do not add features not in the spec**: Implement only what is specified in the checklist. Record out-of-scope findings in `FUTURE_IMPROVEMENTS.md`.
-{CLAUDE_MD_RULES}
+{AGENT_RULES}
 
 ---
 

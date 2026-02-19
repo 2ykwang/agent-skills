@@ -2,6 +2,10 @@
 
 Generates iterable checklist PROMPT files for Ralph Loop from plan files or current context, and provides the /ralph-loop execution command.
 
+## Requires
+
+- [ralph-wiggum](https://github.com/anthropics/claude-code/tree/main/plugins/ralph-wiggum)
+
 ## Installation
 
 ### Claude Code

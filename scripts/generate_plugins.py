@@ -52,11 +52,18 @@ def generate_plugin_json(name: str, description: str, version: str) -> dict:
     }
 
 
-def generate_readme(name: str, description: str) -> str:
+def generate_readme(name: str, description: str, requires: str = "") -> str:
+    requires_section = ""
+    if requires:
+        requires_section = f"""
+## Requires
+
+- {requires}
+"""
     return f"""# {name}
 
 {description}
-
+{requires_section}
 ## Installation
 
 ### Claude Code
@@ -119,7 +126,10 @@ def main():
                 shutil.copy2(item, dest)
 
         # README.md
-        (plugin_path / "README.md").write_text(generate_readme(name, description))
+        requires = fm.get("requires", "")
+        (plugin_path / "README.md").write_text(
+            generate_readme(name, description, requires)
+        )
 
         marketplace_plugins.append(
             {

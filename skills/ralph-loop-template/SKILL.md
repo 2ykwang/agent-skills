@@ -3,6 +3,7 @@ name: ralph-loop-template
 version: 0.0.1
 category: development
 description: Generates iterable checklist PROMPT files for Ralph Loop from plan files or current context, and provides the /ralph-loop execution command.
+requires: "[ralph-wiggum](https://github.com/anthropics/claude-code/tree/main/plugins/ralph-wiggum)"
 disable-model-invocation: true
 argument-hint: "[plan file path]"
 ---
@@ -32,11 +33,17 @@ $ARGUMENTS
 
 Collect project-specific information to embed in the PROMPT file.
 
-**If `CLAUDE.md` exists**: Read it and extract:
-- Verification commands: Combine build, test, lint into a single chain (e.g., `npm run lint && npm run build && npm test`)
-- Key code style rules (items to insert into the PROMPT's absolute rules `{CLAUDE_MD_RULES}`, max 3)
+**Search for agent/project configuration files** in the following priority order:
+1. `CLAUDE.md` (Claude Code)
+2. `.cursorrules` (Cursor)
+3. `.windsurfrules` (Windsurf)
+4. `AGENTS.md`, `COPILOT.md`, `GEMINI.md`
 
-**If `CLAUDE.md` does not exist**: Infer from project structure:
+If a config file is found, extract:
+- Verification commands: Combine build, test, lint into a single chain (e.g., `npm run lint && npm run build && npm test`)
+- Key code style rules (items to insert into the PROMPT's absolute rules `{AGENT_RULES}`, max 3)
+
+**If no config file is found**: Infer from project structure:
 - `package.json` → npm/yarn commands
 - `Makefile` / `Justfile` → make/just commands
 - `Cargo.toml` → cargo commands
@@ -90,7 +97,7 @@ Create a `PROMPT-{kebab-case-name}.md` file in the project root.
 | `{goal title}` | Step 3 | Ask user |
 | `{project name}` | Project directory name or CLAUDE.md | Ask user |
 | `{goal}` | Step 3 | Ask user |
-| `{CLAUDE_MD_RULES}` | Step 2 (CLAUDE.md rules) | Omit entire line if no CLAUDE.md |
+| `{AGENT_RULES}` | Step 2 (agent config rules) | Omit entire line if no config file |
 | `{non-goals}` | Step 3 + non-goal writing rules for inference | Min 2 items |
 | `{reference doc rows}` | Step 2-3 | Omit entire reference docs section if 0 docs |
 | `{iteration procedure}` | Entire `references/iteration-procedure.md` | — |
