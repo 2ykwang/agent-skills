@@ -119,17 +119,23 @@ def main():
         plugin_skills_dir = plugin_path / "skills"
         plugin_skills_dir.mkdir()
         for item in skill_path.iterdir():
+            if item.name == "README.md":
+                continue
             dest = plugin_skills_dir / item.name
             if item.is_dir():
                 shutil.copytree(item, dest)
             else:
                 shutil.copy2(item, dest)
 
-        # README.md
-        requires = fm.get("requires", "")
-        (plugin_path / "README.md").write_text(
-            generate_readme(name, description, requires)
-        )
+        # README.md — use hand-written one if exists, otherwise generate
+        custom_readme = skill_path / "README.md"
+        if custom_readme.exists():
+            shutil.copy2(custom_readme, plugin_path / "README.md")
+        else:
+            requires = fm.get("requires", "")
+            (plugin_path / "README.md").write_text(
+                generate_readme(name, description, requires)
+            )
 
         marketplace_plugins.append(
             {
