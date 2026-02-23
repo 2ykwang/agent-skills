@@ -8,6 +8,13 @@
   },
   "plugins": [
     {
+      "name": "code-history",
+      "source": "./plugins/code-history",
+      "description": "Trace git history of specific code \u2014 find when functions, patterns, or files were added, modified, or removed, and explain the intent behind each change.",
+      "version": "0.0.1",
+      "category": "development"
+    },
+    {
       "name": "django-ticket-triage",
       "source": "./plugins/django-ticket-triage",
       "description": "Analyze a Django Trac ticket and produce a triage recommendation report.",

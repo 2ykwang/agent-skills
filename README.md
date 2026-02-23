@@ -7,6 +7,9 @@
 
 | Skill | |
 |---|---|
+| [code-history](skills/code-history) | Trace git history of specific code — find when functions, patterns, or files were added, modified, or removed, and explain the intent behind each change. |
+| | `npx skills add 2ykwang/agent-skills --skill code-history` |
+| | `claude plugin install code-history@2ykwang-agent-skills` |
 | [docs](skills/docs) | Code documentation agent — write/update docs with /docs write, check status with /docs check. Minimal code blocks, reference pointer based. |
 | | `npx skills add 2ykwang/agent-skills --skill docs` |
 | | `claude plugin install docs@2ykwang-agent-skills` |

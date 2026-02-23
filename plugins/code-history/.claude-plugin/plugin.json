@@ -1,0 +1,12 @@
+{
+  "name": "code-history",
+  "version": "0.0.1",
+  "description": "Trace git history of specific code \u2014 find when functions, patterns, or files were added, modified, or removed, and explain the intent behind each change.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/code-history",
+  "license": "MIT"
+}
