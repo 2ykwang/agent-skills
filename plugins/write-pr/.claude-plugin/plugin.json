@@ -1,0 +1,12 @@
+{
+  "name": "write-pr",
+  "version": "0.0.3",
+  "description": "Analyzes git diff and commit history to write PR title and description based on the project's PR template.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/write-pr",
+  "license": "MIT"
+}

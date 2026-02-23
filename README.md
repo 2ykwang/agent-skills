@@ -16,5 +16,8 @@
 | [ralph-loop-template](skills/ralph-loop-template) | Generate Ralph Loop iteration checklists from plan files. Creates `PROMPT-*.md` files ready for `/ralph-loop`. |
 | | `npx skills add 2ykwang/agent-skills --skill ralph-loop-template` |
 | | `claude plugin install ralph-loop-template@2ykwang-agent-skills` |
+| [write-pr](skills/write-pr) | Analyzes git diff and commit history to write PR title and description based on the project's PR template. |
+| | `npx skills add 2ykwang/agent-skills --skill write-pr` |
+| | `claude plugin install write-pr@2ykwang-agent-skills` |
 
 ---
