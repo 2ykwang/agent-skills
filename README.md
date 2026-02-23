@@ -7,6 +7,9 @@
 
 | Skill | |
 |---|---|
+| [docs](skills/docs) | Code documentation agent — write/update docs with /docs write, check status with /docs check. Minimal code blocks, reference pointer based. |
+| | `npx skills add 2ykwang/agent-skills --skill docs` |
+| | `claude plugin install docs@2ykwang-agent-skills` |
 | [django-ticket-triage](skills/django-ticket-triage) | Analyze a Django Trac ticket and produce a triage recommendation report. |
 | | `npx skills add 2ykwang/agent-skills --skill django-ticket-triage` |
 | | `claude plugin install django-ticket-triage@2ykwang-agent-skills` |

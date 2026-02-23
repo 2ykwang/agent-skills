@@ -1,0 +1,12 @@
+{
+  "name": "docs",
+  "version": "0.0.2",
+  "description": "Code documentation agent \u2014 write/update docs with /docs write, check status with /docs check. Minimal code blocks, reference pointer based.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/docs",
+  "license": "MIT"
+}
