@@ -4,17 +4,25 @@
 from __future__ import annotations
 
 import json
+import random
 import re
 import sys
-from html.parser import HTMLParser
+import time
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from typing import Any
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 from xml.etree import ElementTree
-
-import requests
 
 TRAC_BASE_URL = "https://code.djangoproject.com"
 DEFAULT_TIMEOUT = 30.0
-HEADERS = {"User-Agent": "django-ticket-triage/0.1.0"}
+MAX_RETRIES = 5
+BACKOFF_BASE = 1.0
+BACKOFF_CAP = 30.0
+RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
+HEADERS = {"User-Agent": "django-ticket-triage/0.2.0"}
 
 
 def _strip_html(html: str) -> str:
@@ -22,6 +30,64 @@ def _strip_html(html: str) -> str:
     text = re.sub(r"<br\s*/?>", "\n", html)
     text = re.sub(r"<[^>]+>", "", text)
     return re.sub(r"\n{3,}", "\n\n", text).strip()
+
+
+def _parse_retry_after(value: str | None) -> float | None:
+    """Return Retry-After delay in seconds when possible."""
+    if not value:
+        return None
+
+    value = value.strip()
+    if not value:
+        return None
+
+    if value.isdigit():
+        return max(0.0, float(value))
+
+    try:
+        retry_dt = parsedate_to_datetime(value)
+        if retry_dt.tzinfo is None:
+            retry_dt = retry_dt.replace(tzinfo=timezone.utc)
+        delta = (retry_dt - datetime.now(timezone.utc)).total_seconds()
+        return max(0.0, delta)
+    except (TypeError, ValueError, OverflowError):
+        return None
+
+
+def _backoff_delay(attempt: int, retry_after: str | None = None) -> float:
+    retry_after_seconds = _parse_retry_after(retry_after)
+    if retry_after_seconds is not None:
+        return retry_after_seconds
+
+    exponential = min(BACKOFF_CAP, BACKOFF_BASE * (2 ** (attempt - 1)))
+    jitter = random.uniform(0, exponential * 0.2)
+    return exponential + jitter
+
+
+def _request_bytes(url: str, params: dict[str, Any] | None = None) -> bytes:
+    """Perform HTTP GET with retry/backoff for transient failures."""
+    query = urlencode(params or {}, doseq=True)
+    full_url = f"{url}?{query}" if query else url
+
+    for attempt in range(1, MAX_RETRIES + 1):
+        request = Request(full_url, headers=HEADERS, method="GET")
+        try:
+            with urlopen(request, timeout=DEFAULT_TIMEOUT) as response:
+                return response.read()
+        except HTTPError as exc:
+            if exc.code in RETRYABLE_STATUS_CODES and attempt < MAX_RETRIES:
+                time.sleep(_backoff_delay(attempt, exc.headers.get("Retry-After")))
+                continue
+            raise
+        except URLError:
+            if attempt < MAX_RETRIES:
+                time.sleep(_backoff_delay(attempt))
+                continue
+            raise
+
+
+def _request_text(url: str, params: dict[str, Any] | None = None) -> str:
+    return _request_bytes(url, params=params).decode("utf-8", errors="replace")
 
 
 def get_ticket(ticket_id: int) -> dict[str, Any]:
@@ -50,13 +116,7 @@ def get_ticket(ticket_id: int) -> dict[str, Any]:
             ]
         }
     """
-    resp = requests.get(
-        f"{TRAC_BASE_URL}/ticket/{ticket_id}",
-        headers=HEADERS,
-        timeout=DEFAULT_TIMEOUT,
-    )
-    resp.raise_for_status()
-    html = resp.text
+    html = _request_text(f"{TRAC_BASE_URL}/ticket/{ticket_id}")
 
     # Extract old_values from JavaScript
     old_values = _extract_old_values(html)
@@ -171,15 +231,10 @@ def _extract_old_values(html: str) -> dict[str, str]:
 
 def _get_comments_from_rss(ticket_id: int) -> list[dict[str, str]]:
     """Get comments from RSS feed (easier to parse)."""
-    resp = requests.get(
-        f"{TRAC_BASE_URL}/ticket/{ticket_id}?format=rss",
-        headers=HEADERS,
-        timeout=DEFAULT_TIMEOUT,
-    )
-    resp.raise_for_status()
+    content = _request_bytes(f"{TRAC_BASE_URL}/ticket/{ticket_id}?format=rss")
 
     comments = []
-    root = ElementTree.fromstring(resp.content)
+    root = ElementTree.fromstring(content)
 
     # RSS namespaces
     ns = {"dc": "http://purl.org/dc/elements/1.1/"}
@@ -191,12 +246,12 @@ def _get_comments_from_rss(ticket_id: int) -> list[dict[str, str]]:
 
         author = author_elem.text if author_elem is not None else ""
         date = date_elem.text if date_elem is not None else ""
-        content = ""
+        content_text = ""
         if desc_elem is not None and desc_elem.text:
             # Parse HTML content
-            content = _strip_html(desc_elem.text)
+            content_text = _strip_html(desc_elem.text)
 
-        comments.append({"author": author, "date": date, "content": content})
+        comments.append({"author": author, "date": date, "content": content_text})
 
     return comments
 
@@ -212,14 +267,10 @@ def search(query: str, max_results: int = 20) -> list[dict[str, Any]]:
     Returns:
         [{"id": 36800, "summary": "...", "status": "closed", "resolution": "..."}, ...]
     """
-    resp = requests.get(
+    html = _request_text(
         f"{TRAC_BASE_URL}/search",
         params={"q": query, "noquickjump": "1", "ticket": "on"},
-        headers=HEADERS,
-        timeout=DEFAULT_TIMEOUT,
     )
-    resp.raise_for_status()
-    html = resp.text
 
     results = []
 
@@ -233,7 +284,11 @@ def search(query: str, max_results: int = 20) -> list[dict[str, Any]]:
         r"<dt>(.*?)</dt>", dl_match.group(1), re.DOTALL
     ):
         dt_html = dt_match.group(1)
-        link = re.search(r'<a[^>]*href="[^"]*(/ticket/(\d+))"[^>]*>(.+?)</a>', dt_html, re.DOTALL)
+        link = re.search(
+            r'<a[^>]*href="[^"]*(/ticket/(\d+))"[^>]*>(.+?)</a>',
+            dt_html,
+            re.DOTALL,
+        )
         if not link:
             continue
 

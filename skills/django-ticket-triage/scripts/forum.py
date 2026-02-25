@@ -7,16 +7,25 @@ Django Forum is Discourse-based, so we use the Discourse API.
 from __future__ import annotations
 
 import json
+import random
 import re
 import sys
+import time
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from typing import Any
-
-import requests
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 FORUM_BASE_URL = "https://forum.djangoproject.com"
 DEFAULT_TIMEOUT = 30.0
+MAX_RETRIES = 5
+BACKOFF_BASE = 1.0
+BACKOFF_CAP = 30.0
+RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
 HEADERS = {
-    "User-Agent": "django-ticket-triage/0.1.0",
+    "User-Agent": "django-ticket-triage/0.2.0",
     "Accept": "application/json",
 }
 
@@ -29,6 +38,65 @@ CATEGORIES = {
     "events": 12,
     "packages": 30,
 }
+
+
+def _parse_retry_after(value: str | None) -> float | None:
+    """Return Retry-After delay in seconds when possible."""
+    if not value:
+        return None
+
+    value = value.strip()
+    if not value:
+        return None
+
+    if value.isdigit():
+        return max(0.0, float(value))
+
+    try:
+        retry_dt = parsedate_to_datetime(value)
+        if retry_dt.tzinfo is None:
+            retry_dt = retry_dt.replace(tzinfo=timezone.utc)
+        delta = (retry_dt - datetime.now(timezone.utc)).total_seconds()
+        return max(0.0, delta)
+    except (TypeError, ValueError, OverflowError):
+        return None
+
+
+def _backoff_delay(attempt: int, retry_after: str | None = None) -> float:
+    retry_after_seconds = _parse_retry_after(retry_after)
+    if retry_after_seconds is not None:
+        return retry_after_seconds
+
+    exponential = min(BACKOFF_CAP, BACKOFF_BASE * (2 ** (attempt - 1)))
+    jitter = random.uniform(0, exponential * 0.2)
+    return exponential + jitter
+
+
+def _request_bytes(url: str, params: dict[str, Any] | None = None) -> bytes:
+    """Perform HTTP GET with retry/backoff for transient failures."""
+    query = urlencode(params or {}, doseq=True)
+    full_url = f"{url}?{query}" if query else url
+
+    for attempt in range(1, MAX_RETRIES + 1):
+        request = Request(full_url, headers=HEADERS, method="GET")
+        try:
+            with urlopen(request, timeout=DEFAULT_TIMEOUT) as response:
+                return response.read()
+        except HTTPError as exc:
+            if exc.code in RETRYABLE_STATUS_CODES and attempt < MAX_RETRIES:
+                time.sleep(_backoff_delay(attempt, exc.headers.get("Retry-After")))
+                continue
+            raise
+        except URLError:
+            if attempt < MAX_RETRIES:
+                time.sleep(_backoff_delay(attempt))
+                continue
+            raise
+
+
+def _request_json(url: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
+    payload = _request_bytes(url, params=params)
+    return json.loads(payload.decode("utf-8", errors="replace"))
 
 
 def search(
@@ -64,20 +132,10 @@ def search(
     params: dict[str, Any] = {"q": query}
 
     # Add category filter if specified
-    if category:
-        category_id = CATEGORIES.get(category)
-        if category_id:
-            params["q"] = f"{query} ##{category}"
+    if category and category in CATEGORIES:
+        params["q"] = f"{query} ##{category}"
 
-    resp = requests.get(
-        f"{FORUM_BASE_URL}/search.json",
-        params=params,
-        headers=HEADERS,
-        timeout=DEFAULT_TIMEOUT,
-    )
-    resp.raise_for_status()
-
-    data = resp.json()
+    data = _request_json(f"{FORUM_BASE_URL}/search.json", params=params)
     results = []
 
     # Extract topics from search results
@@ -147,14 +205,7 @@ def get_topic(topic_id: int) -> dict[str, Any]:
             "tags": ["tag1", "tag2"]
         }
     """
-    resp = requests.get(
-        f"{FORUM_BASE_URL}/t/{topic_id}.json",
-        headers=HEADERS,
-        timeout=DEFAULT_TIMEOUT,
-    )
-    resp.raise_for_status()
-
-    data = resp.json()
+    data = _request_json(f"{FORUM_BASE_URL}/t/{topic_id}.json")
 
     canonical_id = data.get("id", topic_id)
     slug = data.get("slug", "")

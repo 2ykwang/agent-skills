@@ -1,6 +1,6 @@
 ---
 name: django-ticket-triage
-version: 0.1.1
+version: 0.2.0
 category: integrations
 description: "Analyze a Django Trac ticket and produce a triage recommendation report."
 argument-hint: "<ticket_id>"
@@ -9,7 +9,7 @@ argument-hint: "<ticket_id>"
 Analyze Django ticket and provide triage recommendations.
 
 **Prerequisites**:
-- `python3` with `requests` package (`pip install requests`)
+- `python3` (standard library only; no extra Python packages required)
 - `gh` — GitHub CLI ([install](https://cli.github.com/)). Run `gh auth login` to authenticate.
 - Django source code — `git clone https://github.com/django/django.git` in the working directory (for Step 5: source code analysis)
 

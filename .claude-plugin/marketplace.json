@@ -18,7 +18,7 @@
       "name": "django-ticket-triage",
       "source": "./plugins/django-ticket-triage",
       "description": "Analyze a Django Trac ticket and produce a triage recommendation report.",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "category": "integrations"
     },
     {

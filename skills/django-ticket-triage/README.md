@@ -28,7 +28,7 @@ The full report is saved to `triage-reports/<ticket_id>.md`.
 
 ## Requirements
 
-- `python3` with `requests` package
+- `python3` (standard library only; no extra Python packages required)
 - `gh` CLI (authenticated)
 - Django source checkout (`git clone https://github.com/django/django.git`)
 
