@@ -1,0 +1,12 @@
+{
+  "name": "github-review-issue",
+  "version": "0.1.0",
+  "description": "Analyze a GitHub issue and provide a structured summary with next-action assessment.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/github-review-issue",
+  "license": "MIT"
+}
