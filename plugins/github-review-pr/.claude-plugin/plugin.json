@@ -1,0 +1,12 @@
+{
+  "name": "github-review-pr",
+  "version": "0.1.0",
+  "description": "Analyze a GitHub pull request and produce a review report covering changes, review status, and code quality.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/github-review-pr",
+  "license": "MIT"
+}
