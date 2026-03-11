@@ -1,0 +1,12 @@
+{
+  "name": "github-review-check-duplicate",
+  "version": "0.1.0",
+  "description": "Check if a GitHub issue is a duplicate and find related issues and PRs.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/github-review-check-duplicate",
+  "license": "MIT"
+}

@@ -29,11 +29,46 @@
       "category": "productivity"
     },
     {
+      "name": "github-review-check-duplicate",
+      "source": "./plugins/github-review-check-duplicate",
+      "description": "Check if a GitHub issue is a duplicate and find related issues and PRs.",
+      "version": "0.1.0",
+      "category": "productivity"
+    },
+    {
+      "name": "github-review-issue",
+      "source": "./plugins/github-review-issue",
+      "description": "Analyze a GitHub issue and provide a structured summary with next-action assessment.",
+      "version": "0.1.0",
+      "category": "productivity"
+    },
+    {
+      "name": "github-review-pr",
+      "source": "./plugins/github-review-pr",
+      "description": "Analyze a GitHub pull request and produce a review report covering changes, review status, and code quality.",
+      "version": "0.1.0",
+      "category": "productivity"
+    },
+    {
       "name": "html-visual",
       "source": "./plugins/html-visual",
       "description": "Generate an interactive single-file HTML visualization (mockup, wireframe, ERD, flowchart, chart, slides, architecture diagram, dashboard, timeline, mindmap, kanban, table).",
       "version": "0.0.1",
       "category": "design-frontend"
+    },
+    {
+      "name": "obsidian-research",
+      "source": "./plugins/obsidian-research",
+      "description": "Obsidian fleeting note\ub97c \uad6c\uc870\ud654\ub41c \ub9ac\uc11c\uce58\ub97c \ud1b5\ud574 permanent note\ub85c \ubc1c\uc804\uc2dc\ud0a4\ub294 \uc81c\ud154\uce74\uc2a4\ud150 \uc6cc\ud06c\ud50c\ub85c\uc6b0. init/gather/publish \uc11c\ube0c\ucee4\ub9e8\ub4dc\ub85c \ub2e8\uacc4\ubcc4 \ub9ac\uc11c\uce58 \uc218\ud589.",
+      "version": "0.0.1",
+      "category": "productivity"
+    },
+    {
+      "name": "project",
+      "source": "./plugins/project",
+      "description": "Notion \ud398\uc774\uc9c0\uc5d0\uc11c \ud0a4\uc6cc\ub4dc\ub97c \ucd94\ucd9c\ud558\uace0 Slack, GitHub\uc5d0\uc11c \uad00\ub828 \uc790\ub8cc\ub97c \uac80\uc0c9\ud558\uc5ec \ud398\uc774\uc9c0 \ud558\ub2e8\uc5d0 \ucc38\uc870 \ub9c1\ud06c\ub97c \uae30\ub85d\ud569\ub2c8\ub2e4.",
+      "version": "0.1.0",
+      "category": "productivity"
     },
     {
       "name": "ralph-loop-template",
