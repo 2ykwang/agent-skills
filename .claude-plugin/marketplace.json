@@ -57,6 +57,13 @@
       "category": "design-frontend"
     },
     {
+      "name": "quick-pr",
+      "source": "./plugins/quick-pr",
+      "description": "Split a minor change from the current work into a separate worktree and open a PR without interrupting your flow. Requires Claude Code (uses EnterWorktree, ExitWorktree, AskUserQuestion).",
+      "version": "0.0.1",
+      "category": "productivity"
+    },
+    {
       "name": "ralph-loop-template",
       "source": "./plugins/ralph-loop-template",
       "description": "Generates iterable checklist PROMPT files for Ralph Loop from plan files or current context, and provides the /ralph-loop execution command.",
