@@ -60,7 +60,7 @@
       "name": "quick-pr",
       "source": "./plugins/quick-pr",
       "description": "Split a minor change from the current work into a separate worktree and open a PR without interrupting your flow. Requires Claude Code (uses EnterWorktree, ExitWorktree, AskUserQuestion).",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "category": "productivity"
     },
     {

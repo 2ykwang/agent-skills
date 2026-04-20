@@ -1,6 +1,6 @@
 ---
 name: quick-pr
-version: 0.0.1
+version: 0.0.2
 category: productivity
 description: "Split a minor change from the current work into a separate worktree and open a PR without interrupting your flow. Requires Claude Code (uses EnterWorktree, ExitWorktree, AskUserQuestion)."
 argument-hint: "[file-path or change description]"
@@ -47,49 +47,45 @@ Fetch these tools via `ToolSearch` before use:
 
 ## Procedure
 
-This skill is interactive. Get user confirmation at each decision point.
-
 ### Step 1: Determine Change Scope
 
-**If argument is a file path:**
-- Run `git diff HEAD -- <file>` to get the current diff
-- Show the diff to the user and ask: "Open a PR for this change?"
+**File path arg:** Run `git diff HEAD -- <file>`, show the diff.
+**Description arg:** Propose which files to modify and how.
+**Empty arg:** Ask what to split out.
 
-**If argument is a description:**
-- Propose which files to modify and how
-- Ask the user to confirm
-
-**If argument is empty:**
-- Use `AskUserQuestion` to ask what change to split out
+→ **Use `AskUserQuestion` to confirm the scope before continuing.**
 
 ### Step 2: Choose Branch Name and Commit Message
 
-Based on the change, propose up to 5 candidates for each:
+Check the project's commit style: `git log --oneline -10`.
 
-**Branch names:**
-- Use appropriate prefix: `fix/`, `chore/`, `docs/`, `feat/`
-- kebab-case
+Propose up to 5 candidates for each:
+- **Branch:** kebab-case, prefix `fix/` `chore/` `docs/` `feat/`
+- **Commit:** match dominant pattern (Conventional Commits, ticket prefix, etc.); default to Conventional Commits if unclear
 
-**Commit messages:**
-- Check the project's commit style first: `git log --oneline -10`
-- Match the dominant pattern (Conventional Commits, ticket prefix, etc.)
-- If no clear pattern, default to Conventional Commits (`type: description`)
+→ **Use `AskUserQuestion` with the numbered options. User picks or writes their own.**
 
-Present numbered options. User picks by number or writes their own.
-
-### Step 3: Create Worktree and Apply Changes
+### Step 3: Choose Base Branch, Create Worktree, Apply Changes
 
 ```bash
 git fetch origin
 ```
 
-Determine the default branch:
+Detect the default branch as the recommended base:
 ```bash
 git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null
 ```
 Fallback: check which of `main`, `master`, `develop` exists.
 
-Use `EnterWorktree` to create a worktree based on the default branch. Then rename the branch:
+Gather recent remote branches as additional candidates:
+```bash
+git for-each-ref --sort=-committerdate refs/remotes/ \
+  --format='%(refname:short)' | grep -v HEAD | head -5
+```
+
+→ **Use `AskUserQuestion` to pick the base branch.** Present the detected default as the recommended option, followed by the recent branches. User can write their own. This base is reused as the PR target in Step 4.
+
+Use `EnterWorktree` to create a worktree based on the chosen base branch. Then rename the branch:
 
 ```bash
 git branch -m <chosen-branch-name>
@@ -105,26 +101,30 @@ cp <original-worktree-path>/<file> <current-worktree-path>/<file>
 **Description-based mode:**
 Make the edit directly in the worktree.
 
-### Step 4: Commit, Push, and Create PR
+### Step 4: Commit, Push, Create PR
 
 ```bash
 git add <changed-files>
 git commit -m "<chosen-commit-message>"
+```
+
+→ **Use `AskUserQuestion` to confirm push.** On approval:
+```bash
 git push -u origin <branch-name>
 ```
 
-**Write the PR body inline (do not delegate to another skill):**
+Build the PR body inline (do not delegate to another skill):
 
-1. Check for a PR template — read these paths in parallel:
+1. Check templates in parallel:
    - `.github/PULL_REQUEST_TEMPLATE.md`
    - `.github/pull_request_template.md`
    - `docs/pull_request_template.md`
    - `PULL_REQUEST_TEMPLATE.md`
-   - Also check `.github/PULL_REQUEST_TEMPLATE/` directory
+   - `.github/PULL_REQUEST_TEMPLATE/` directory
 
-2. **If a template exists:** preserve its structure exactly. Fill sections from the diff. Leave unfillable sections (Screenshots, Related Issues) as-is with their original placeholders.
+2. **Template exists:** preserve structure exactly. Fill sections from the diff. Leave unfillable sections (Screenshots, Related Issues) with their original placeholders.
 
-3. **If no template exists:** use this minimal structure:
+3. **No template:**
    ```markdown
    ## Summary
    <what and why — 1-3 sentences>
@@ -133,34 +133,19 @@ git push -u origin <branch-name>
    <bullet list of key changes>
    ```
 
-4. For the PR title, match the style from `gh pr list --state merged --limit 5 --json title 2>/dev/null`. Fallback to `git log --oneline -10`. Default to Conventional Commits if unclear.
+4. PR title: match `gh pr list --state merged --limit 5 --json title 2>/dev/null`. Fallback to `git log --oneline -10`. Default to Conventional Commits if unclear.
 
-5. Show the draft title and body to the user. Apply any edits they request.
+→ **Use `AskUserQuestion` with the draft title + body + target branch (defaults to the base from Step 3). Do not run `gh pr create` until approved.**
 
-6. Create the PR:
-   ```bash
-   gh pr create --title "<title>" --body "<body>"
-   ```
+```bash
+gh pr create --base <target-branch> --title "<title>" --body "<body>"
+```
 
 ### Step 5: Confirm and Clean Up
 
-Show the PR link:
+Show `PR created: <URL>`.
 
-```
-PR created: <URL>
-```
-
-Then ask:
-
-```
-Remove the worktree?
-```
-
-- **Yes**: call `ExitWorktree` with `action: "remove"`
-- **No**: call `ExitWorktree` with `action: "keep"`
-
-## Constraints
-
-- This skill modifies external state (git push, PR creation). Always confirm before pushing or creating the PR.
-- Do not include `Co-Authored-By` in commits.
-- Keep the entire flow conversational — never batch multiple steps without user checkpoints.
+→ **Use `AskUserQuestion`: "Remove the worktree?"**
+- **Yes** → `ExitWorktree` with `action: "remove"`, `discard_changes: true`
+  (safe — the commit is already on origin from Step 4)
+- **No** → `ExitWorktree` with `action: "keep"`
