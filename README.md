@@ -13,6 +13,9 @@
 | [docs](skills/docs) | Code documentation agent — write/update docs with /docs write, check status with /docs check. Minimal code blocks, reference pointer based. |
 | | `npx skills add 2ykwang/agent-skills --skill docs` |
 | | `claude plugin install docs@2ykwang-agent-skills` |
+| [github-create-issue](skills/github-create-issue) | File a GitHub issue maintainers can actually act on — verified, not a duplicate, follows repo conventions (template/label/prefix), and previewed before publishing. Use when reporting a known problem. |
+| | `npx skills add 2ykwang/agent-skills --skill github-create-issue` |
+| | `claude plugin install github-create-issue@2ykwang-agent-skills` |
 | [github-review-check-duplicate](skills/github-review-check-duplicate) | Check if a GitHub issue is a duplicate and find related issues and PRs. |
 | | `npx skills add 2ykwang/agent-skills --skill github-review-check-duplicate` |
 | | `claude plugin install github-review-check-duplicate@2ykwang-agent-skills` |

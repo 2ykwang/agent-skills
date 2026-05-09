@@ -29,6 +29,13 @@
       "category": "productivity"
     },
     {
+      "name": "github-create-issue",
+      "source": "./plugins/github-create-issue",
+      "description": "File a GitHub issue maintainers can actually act on \u2014 verified, not a duplicate, follows repo conventions (template/label/prefix), and previewed before publishing. Use when reporting a known problem.",
+      "version": "0.1.0",
+      "category": "productivity"
+    },
+    {
       "name": "github-review-check-duplicate",
       "source": "./plugins/github-review-check-duplicate",
       "description": "Check if a GitHub issue is a duplicate and find related issues and PRs.",
