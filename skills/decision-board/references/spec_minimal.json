@@ -1,0 +1,73 @@
+{
+  "title": "Library choice for new payments service",
+  "subtitle": "3 small decisions before scaffolding the project",
+  "categories": ["http", "logging", "testing"],
+  "decisions": [
+    {
+      "id": 1,
+      "title": "HTTP client",
+      "summary": "Sync vs async, control over retries",
+      "category": "http",
+      "current_example": "<pre class=\"code-block neutral\">// no client picked yet — placeholder calls scattered across services</pre>",
+      "options": [
+        {
+          "key": "a",
+          "label": "<code>requests</code> + manual retry",
+          "cost": "0 deps; ~30 lines retry helper",
+          "recommended": true,
+          "preview": "<pre class=\"code-block preview\">resp = session.get(url, timeout=5)\nresp.raise_for_status()</pre>"
+        },
+        {
+          "key": "b",
+          "label": "<code>httpx</code> with built-in retries",
+          "cost": "1 new dep; async-ready",
+          "preview": "<pre class=\"code-block preview\">async with httpx.AsyncClient() as c:\n    resp = await c.get(url)</pre>"
+        }
+      ],
+      "rationale": "Most callers are sync today. Going async means rewriting <code>billing-worker</code> first."
+    },
+    {
+      "id": 2,
+      "title": "Logging format",
+      "summary": "Plain text vs structured JSON",
+      "category": "logging",
+      "current_example": "<pre class=\"code-block current\">2024-09-12 14:22:01 INFO charge processed for user 42</pre>",
+      "options": [
+        {
+          "key": "a",
+          "label": "Keep plain text",
+          "cost": "0",
+          "preview": "<pre class=\"code-block preview\">2024-09-12 14:22:01 INFO charge processed for user 42</pre>"
+        },
+        {
+          "key": "b",
+          "label": "Structured JSON via <code>structlog</code>",
+          "cost": "1 dep + log shipper config",
+          "recommended": true,
+          "preview": "<pre class=\"code-block preview\">{\"ts\":\"2024-09-12T14:22:01Z\",\"level\":\"info\",\"event\":\"charge_processed\",\"user_id\":42}</pre>"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Test framework",
+      "summary": "Default `unittest` vs `pytest`",
+      "category": "testing",
+      "options": [
+        {
+          "key": "a",
+          "label": "<code>unittest</code> (stdlib)",
+          "cost": "0 deps",
+          "preview": "<pre class=\"code-block preview\">class TestCharge(unittest.TestCase):\n    def test_ok(self):\n        self.assertEqual(charge(10), 10)</pre>"
+        },
+        {
+          "key": "b",
+          "label": "<code>pytest</code>",
+          "cost": "1 dev dep; fixtures, parametrize",
+          "recommended": true,
+          "preview": "<pre class=\"code-block preview\">def test_ok():\n    assert charge(10) == 10</pre>"
+        }
+      ]
+    }
+  ]
+}

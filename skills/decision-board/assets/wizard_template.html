@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decision Board</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --fg: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #e0e0e0;
+    --card: #ffffff;
+    --accent: #2563eb;
+    --recommended: #059669;
+    --hold: #d97706;
+    --skip: #9ca3af;
+    --shadow: 0 1px 3px rgba(0,0,0,0.05);
+    --code-bg: #f3f4f6;
+    --code-current: #fef3c7;
+    --code-current-border: #f59e0b;
+    --code-preview: #d1fae5;
+    --code-preview-border: #10b981;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f0f0f;
+      --fg: #e5e5e5;
+      --muted: #9ca3af;
+      --border: #2a2a2a;
+      --card: #1a1a1a;
+      --accent: #3b82f6;
+      --recommended: #10b981;
+      --hold: #f59e0b;
+      --skip: #6b7280;
+      --shadow: 0 1px 3px rgba(0,0,0,0.3);
+      --code-bg: #262626;
+      --code-current: #3a2f15;
+      --code-current-border: #d97706;
+      --code-preview: #14352b;
+      --code-preview-border: #059669;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 100vh;
+  }
+  @media (max-width: 720px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+  }
+
+  /* Sidebar — minimap */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    background: var(--card);
+    padding: 20px 12px;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+  }
+  .side-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    font-weight: 600;
+    margin: 0 4px 10px;
+  }
+  .minimap-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 1px;
+  }
+  .minimap-item:hover { background: var(--code-bg); color: var(--fg); }
+  .minimap-item.active { background: var(--accent); color: white; }
+  .minimap-item.active .mm-status { color: rgba(255,255,255,0.9); }
+  .minimap-item.decided { color: var(--fg); }
+  .mm-num { font-weight: 600; min-width: 22px; }
+  .mm-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .mm-status {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    min-width: 14px;
+    text-align: right;
+  }
+  .minimap-item.decided .mm-status { color: var(--recommended); }
+  .minimap-item.hold .mm-status { color: var(--hold); }
+  .minimap-item.skip .mm-status { color: var(--skip); }
+
+  /* Main — single decision per screen */
+  .main {
+    padding: 24px 32px 140px;
+    max-width: 980px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  header.board-head {
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+  h1.board-title {
+    margin: 0 0 4px;
+    font-size: 22px;
+  }
+  .board-subtitle { margin: 0; color: var(--muted); font-size: 14px; }
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--recommended);
+    width: 0%;
+    transition: width 0.2s;
+  }
+  .progress-text {
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .filter-btn {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+    border-radius: 14px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .filter-btn:hover { border-color: var(--accent); }
+  .filter-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  /* Decision card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    box-shadow: var(--shadow);
+  }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .meta-id { font-weight: 600; }
+  .meta-tag {
+    background: var(--code-bg);
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .card-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .card-summary {
+    color: var(--muted);
+    margin: 0 0 18px;
+  }
+
+  .ex-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    margin: 14px 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .ex-label.current { color: var(--code-current-border); }
+  .ex-label.preview { color: var(--code-preview-border); }
+  .ex-label::before { content: "▣"; font-size: 10px; }
+
+  .code-block, .tui-mock {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+    font-size: 12.5px;
+    line-height: 1.55;
+    padding: 12px 14px;
+    border-radius: 6px;
+    overflow-x: auto;
+    white-space: pre;
+    margin: 0 0 6px;
+  }
+  .code-block.current, .tui-mock.before {
+    background: var(--code-current);
+    border-left: 3px solid var(--code-current-border);
+  }
+  .code-block.preview, .tui-mock.after {
+    background: var(--code-preview);
+    border-left: 3px solid var(--code-preview-border);
+  }
+  .code-block.neutral, .tui-mock.neutral {
+    background: var(--code-bg);
+    border-left: 3px solid var(--border);
+  }
+  .hl-add {
+    background: rgba(16, 185, 129, 0.25);
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+  .hl-del {
+    background: rgba(239, 68, 68, 0.25);
+    padding: 0 2px;
+    border-radius: 2px;
+    text-decoration: line-through;
+    text-decoration-color: rgba(239, 68, 68, 0.6);
+  }
+  .hl-note {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Options */
+  .options { margin: 20px 0 6px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .option:hover { border-color: var(--accent); background: var(--code-bg); }
+  .option input[type="radio"] {
+    margin-top: 4px;
+    cursor: pointer;
+    transform: scale(1.15);
+  }
+  .option-content { flex: 1; }
+  .option-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 15px;
+  }
+  .option-key {
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 18px;
+  }
+  .option-cost {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .badge-rec {
+    background: var(--recommended);
+    color: white;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .option:has(input:checked) {
+    border-color: var(--accent);
+    background: var(--code-bg);
+  }
+
+  .preview-empty {
+    color: var(--muted);
+    font-size: 13px;
+    font-style: italic;
+    padding: 12px 14px;
+    background: var(--code-bg);
+    border-left: 3px solid var(--border);
+    border-radius: 6px;
+    margin: 6px 0;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .btn-secondary {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .btn-secondary:hover { color: var(--fg); border-color: var(--muted); }
+  .btn-secondary.active.btn-hold {
+    background: var(--hold);
+    color: white;
+    border-color: var(--hold);
+  }
+  .btn-secondary.active.btn-skip {
+    background: var(--skip);
+    color: white;
+    border-color: var(--skip);
+  }
+
+  details.rationale-toggle {
+    margin-top: 14px;
+    font-size: 13px;
+  }
+  details.rationale-toggle summary {
+    cursor: pointer;
+    color: var(--muted);
+    user-select: none;
+    padding: 4px 0;
+  }
+  details.rationale-toggle summary:hover { color: var(--fg); }
+  .rationale-body {
+    padding: 12px 14px;
+    background: var(--code-bg);
+    border-radius: 4px;
+    margin-top: 6px;
+  }
+
+  .comment-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border);
+  }
+  .comment-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .comment-saved-tag {
+    font-size: 10px;
+    color: var(--recommended);
+    opacity: 0;
+    transition: opacity 0.2s;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+  }
+  .comment-saved-tag.show { opacity: 1; }
+  .comment-input {
+    width: 100%;
+    min-height: 60px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    color: var(--fg);
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .comment-input:focus { outline: none; border-color: var(--accent); }
+  .comment-input::placeholder { color: var(--muted); opacity: 0.7; }
+
+  /* Footer / nav */
+  .footer-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+    z-index: 5;
+  }
+  .footer-spacer { flex: 1; }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-outline {
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .btn-outline:hover { border-color: var(--accent); }
+  .nav-info {
+    color: var(--muted);
+    font-size: 13px;
+    min-width: 70px;
+    text-align: center;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--fg);
+    color: var(--bg);
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .toast.show { opacity: 1; }
+
+  /* Help overlay */
+  .help-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+  }
+  .help-overlay.show { display: flex; }
+  .help-box {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 24px 28px;
+    max-width: 420px;
+    width: 90%;
+    border: 1px solid var(--border);
+  }
+  .help-box h2 { margin: 0 0 12px; font-size: 17px; }
+  .help-box dl { margin: 0; }
+  .help-box dt {
+    display: inline-block;
+    background: var(--code-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+    margin-right: 10px;
+    min-width: 70px;
+  }
+  .help-box dd {
+    display: inline;
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0;
+  }
+  .help-box dl > div { margin-bottom: 8px; }
+  .help-close {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="side-title">Decisions</div>
+    <div id="minimap"></div>
+  </aside>
+
+  <main class="main">
+    <header class="board-head">
+      <h1 class="board-title" id="boardTitle"></h1>
+      <p class="board-subtitle" id="boardSubtitle"></p>
+      <div class="progress-row">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText"></div>
+      </div>
+      <div class="filter-bar" id="filterBar"></div>
+    </header>
+
+    <article class="card" id="cardHost"></article>
+  </main>
+</div>
+
+<div class="footer-bar">
+  <button class="btn-outline" id="prevBtn">← Previous</button>
+  <span class="nav-info" id="navInfo">1 / 1</span>
+  <button class="btn-outline" id="nextBtn">Next →</button>
+  <span class="footer-spacer"></span>
+  <button class="btn-outline" id="helpBtn" title="Keyboard shortcuts (?)">?</button>
+  <button class="btn-outline" id="resetBtn">Reset</button>
+  <button class="btn-outline" id="copyJsonBtn">Copy JSON</button>
+  <button class="btn-outline" id="copyMdBtn">Copy Markdown</button>
+  <button class="btn-primary" id="submitBtn" hidden>Submit</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="help-overlay" id="helpOverlay">
+  <div class="help-box">
+    <h2>Keyboard shortcuts</h2>
+    <dl>
+      <div><dt>← →</dt><dd>previous / next decision</dd></div>
+      <div><dt>1 – 9</dt><dd>pick option by index</dd></div>
+      <div><dt>h</dt><dd>toggle hold</dd></div>
+      <div><dt>k</dt><dd>toggle skip</dd></div>
+      <div><dt>r</dt><dd>show rationale</dd></div>
+      <div><dt>?</dt><dd>this help</dd></div>
+      <div><dt>esc</dt><dd>close help / blur input</dd></div>
+    </dl>
+    <div class="help-close">Click outside or press esc to close.</div>
+  </div>
+</div>
+
+<script>
+/* SPEC_PLACEHOLDER */
+
+const decisions = (SPEC.decisions || []).map(d => ({ ...d }));
+const categories = Array.isArray(SPEC.categories) ? SPEC.categories : [];
+
+const STORAGE_KEY = "decision-board:" + (SPEC.title || "untitled");
+const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+let currentIndex = 0;
+let activeFilter = "all";
+
+const els = {
+  title: document.getElementById("boardTitle"),
+  subtitle: document.getElementById("boardSubtitle"),
+  progressFill: document.getElementById("progressFill"),
+  progressText: document.getElementById("progressText"),
+  filterBar: document.getElementById("filterBar"),
+  minimap: document.getElementById("minimap"),
+  cardHost: document.getElementById("cardHost"),
+  prev: document.getElementById("prevBtn"),
+  next: document.getElementById("nextBtn"),
+  navInfo: document.getElementById("navInfo"),
+  copyMd: document.getElementById("copyMdBtn"),
+  copyJson: document.getElementById("copyJsonBtn"),
+  submit: document.getElementById("submitBtn"),
+  reset: document.getElementById("resetBtn"),
+  help: document.getElementById("helpBtn"),
+  helpOverlay: document.getElementById("helpOverlay"),
+  toast: document.getElementById("toast"),
+};
+
+// Server mode: when served over HTTP, expose a Submit button that POSTs to /api/submit.
+// File:// loads (build.py output) hide the button — Copy Markdown / Copy JSON remain.
+const isServerMode = location.protocol === "http:" || location.protocol === "https:";
+
+function visibleDecisions() {
+  if (activeFilter === "all") return decisions;
+  if (activeFilter === "undecided") {
+    return decisions.filter(d => {
+      const c = state[d.id]?.choice;
+      return !c || c === "hold" || c === "skip";
+    });
+  }
+  return decisions.filter(d => d.category === activeFilter);
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  updateProgress();
+  renderMinimap();
+}
+
+function updateProgress() {
+  const decided = decisions.filter(d => {
+    const c = state[d.id]?.choice;
+    return c && c !== "hold" && c !== "skip";
+  }).length;
+  const total = decisions.length;
+  const pct = total === 0 ? 0 : (decided / total) * 100;
+  els.progressFill.style.width = pct + "%";
+  let label = `${decided}/${total} decided`;
+  const held = decisions.filter(d => state[d.id]?.choice === "hold").length;
+  const skipped = decisions.filter(d => state[d.id]?.choice === "skip").length;
+  if (held) label += `, ${held} on hold`;
+  if (skipped) label += `, ${skipped} skipped`;
+  els.progressText.textContent = label;
+}
+
+function showToast(msg) {
+  els.toast.textContent = msg;
+  els.toast.classList.add("show");
+  setTimeout(() => els.toast.classList.remove("show"), 1800);
+}
+
+function renderHeader() {
+  els.title.textContent = SPEC.title || "Decision Board";
+  if (SPEC.subtitle) {
+    els.subtitle.textContent = SPEC.subtitle;
+  } else {
+    els.subtitle.style.display = "none";
+  }
+}
+
+function renderFilterBar() {
+  const wantsFilter = categories.length > 0;
+  if (!wantsFilter) {
+    els.filterBar.style.display = "none";
+    return;
+  }
+  const buttons = [
+    { value: "all", label: "All" },
+    ...categories.map(c => ({ value: c, label: c })),
+    { value: "undecided", label: "Undecided" },
+  ];
+  els.filterBar.innerHTML = buttons.map(b =>
+    `<button class="filter-btn${b.value === activeFilter ? " active" : ""}" data-filter="${b.value}">${b.label}</button>`
+  ).join("");
+  els.filterBar.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeFilter = btn.dataset.filter;
+      // jump to first visible decision under the new filter
+      const visible = visibleDecisions();
+      if (visible.length === 0) {
+        showToast("No decisions match this filter.");
+        return;
+      }
+      const newIdx = decisions.indexOf(visible[0]);
+      currentIndex = newIdx;
+      renderFilterBar();
+      renderCard();
+      renderMinimap();
+    });
+  });
+}
+
+function statusForDecision(d) {
+  const c = state[d.id]?.choice;
+  if (!c) return "";
+  if (c === "hold") return "hold";
+  if (c === "skip") return "skip";
+  return "decided";
+}
+
+function renderMinimap() {
+  els.minimap.innerHTML = decisions.map((d, i) => {
+    const status = statusForDecision(d);
+    const c = state[d.id]?.choice;
+    const statusLabel =
+      status === "decided" ? c.toUpperCase() :
+      status === "hold" ? "H" :
+      status === "skip" ? "—" : "";
+    const cls = ["minimap-item", status, i === currentIndex ? "active" : ""]
+      .filter(Boolean).join(" ");
+    return `<div class="${cls}" data-index="${i}">
+      <span class="mm-num">${d.id}.</span>
+      <span class="mm-title">${escapeHtml(d.title)}</span>
+      <span class="mm-status">${statusLabel}</span>
+    </div>`;
+  }).join("");
+  els.minimap.querySelectorAll(".minimap-item").forEach(item => {
+    item.addEventListener("click", () => {
+      currentIndex = +item.dataset.index;
+      renderCard();
+      renderMinimap();
+    });
+  });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function buildOptionsHtml(d, saved) {
+  return d.options.map(opt => `
+    <label class="option">
+      <input type="radio" name="opt-${d.id}" value="${escapeHtml(opt.key)}"${saved.choice === opt.key ? " checked" : ""}>
+      <div class="option-content">
+        <div class="option-label">
+          <span class="option-key">${escapeHtml(opt.key)}.</span>
+          <span class="option-text">${opt.label || ""}</span>
+          ${opt.recommended ? '<span class="badge-rec">recommended</span>' : ""}
+        </div>
+        ${opt.cost ? `<div class="option-cost">cost: ${escapeHtml(opt.cost)}</div>` : ""}
+      </div>
+    </label>
+  `).join("");
+}
+
+function renderPreviewArea(card, d, choice) {
+  const wrap = card.querySelector(".preview-wrap");
+  if (!choice || choice === "hold" || choice === "skip") {
+    wrap.innerHTML = `<div class="preview-empty">Pick an option to preview the result.</div>`;
+    return;
+  }
+  const opt = d.options.find(o => o.key === choice);
+  if (!opt || !opt.preview) {
+    wrap.innerHTML = `<div class="preview-empty">No preview available for this option.</div>`;
+    return;
+  }
+  wrap.innerHTML = `
+    <div class="ex-label preview">If you pick ${escapeHtml(opt.key)}</div>
+    ${opt.preview}
+  `;
+}
+
+function renderCard() {
+  if (decisions.length === 0) {
+    els.cardHost.innerHTML = `<div class="preview-empty">This board has no decisions.</div>`;
+    return;
+  }
+  if (currentIndex < 0) currentIndex = 0;
+  if (currentIndex >= decisions.length) currentIndex = decisions.length - 1;
+
+  const d = decisions[currentIndex];
+  const saved = state[d.id] || {};
+  const visible = visibleDecisions();
+  const visibleIdx = visible.indexOf(d) + 1;
+  els.navInfo.textContent = visible.length > 0
+    ? `${visibleIdx} / ${visible.length}`
+    : `${currentIndex + 1} / ${decisions.length}`;
+
+  els.cardHost.innerHTML = `
+    <div class="card-meta">
+      <span class="meta-id">#${escapeHtml(String(d.id))}</span>
+      ${d.category ? `<span class="meta-tag">${escapeHtml(d.category)}</span>` : ""}
+    </div>
+    <h2 class="card-title">${escapeHtml(d.title)}</h2>
+    ${d.summary ? `<p class="card-summary">${escapeHtml(d.summary)}</p>` : ""}
+    ${d.current_example ? `
+      <div class="ex-label current">Current</div>
+      ${d.current_example}
+    ` : ""}
+    <div class="options">${buildOptionsHtml(d, saved)}</div>
+    <div class="preview-wrap"></div>
+    <div class="actions">
+      <button class="btn-secondary btn-hold${saved.choice === "hold" ? " active" : ""}">Hold</button>
+      <button class="btn-secondary btn-skip${saved.choice === "skip" ? " active" : ""}">Skip</button>
+    </div>
+    ${d.rationale ? `
+      <details class="rationale-toggle">
+        <summary>Show reasoning</summary>
+        <div class="rationale-body">${d.rationale}</div>
+      </details>
+    ` : ""}
+    <div class="comment-section">
+      <label class="comment-label">
+        Notes (optional)
+        <span class="comment-saved-tag">saved</span>
+      </label>
+      <textarea class="comment-input" placeholder="Open thoughts, alt options, follow-ups..."></textarea>
+    </div>
+  `;
+
+  // Populate preview
+  renderPreviewArea(
+    els.cardHost,
+    d,
+    saved.choice && saved.choice !== "hold" && saved.choice !== "skip" ? saved.choice : null,
+  );
+
+  // Wire radios
+  els.cardHost.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener("change", () => {
+      if (!state[d.id]) state[d.id] = {};
+      state[d.id].choice = input.value;
+      els.cardHost.querySelectorAll(".btn-hold, .btn-skip").forEach(b => b.classList.remove("active"));
+      renderPreviewArea(els.cardHost, d, input.value);
+      save();
+    });
+  });
+
+  // Wire hold / skip
+  const holdBtn = els.cardHost.querySelector(".btn-hold");
+  const skipBtn = els.cardHost.querySelector(".btn-skip");
+  holdBtn.addEventListener("click", () => toggleStatus(d, "hold"));
+  skipBtn.addEventListener("click", () => toggleStatus(d, "skip"));
+
+  // Wire comment
+  const ta = els.cardHost.querySelector(".comment-input");
+  ta.value = saved.comment || "";
+  const savedTag = els.cardHost.querySelector(".comment-saved-tag");
+  let timer;
+  ta.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (!state[d.id]) state[d.id] = {};
+      state[d.id].comment = ta.value;
+      save();
+      savedTag.classList.add("show");
+      setTimeout(() => savedTag.classList.remove("show"), 1100);
+    }, 350);
+  });
+
+  els.prev.disabled = currentIndex === 0;
+  els.next.disabled = currentIndex === decisions.length - 1;
+}
+
+function toggleStatus(d, status) {
+  if (!state[d.id]) state[d.id] = {};
+  if (state[d.id].choice === status) {
+    delete state[d.id].choice;
+  } else {
+    state[d.id].choice = status;
+  }
+  save();
+  renderCard();
+}
+
+/* Navigation */
+function move(delta) {
+  const visible = visibleDecisions();
+  if (visible.length === 0) return;
+  const cur = decisions[currentIndex];
+  let curVisibleIdx = visible.indexOf(cur);
+  if (curVisibleIdx === -1) {
+    // current is filtered out — jump to first visible
+    currentIndex = decisions.indexOf(visible[0]);
+    renderCard();
+    renderMinimap();
+    return;
+  }
+  const next = curVisibleIdx + delta;
+  if (next < 0 || next >= visible.length) return;
+  currentIndex = decisions.indexOf(visible[next]);
+  renderCard();
+  renderMinimap();
+}
+
+els.prev.addEventListener("click", () => move(-1));
+els.next.addEventListener("click", () => move(1));
+
+/* Keyboard shortcuts */
+document.addEventListener("keydown", (e) => {
+  // Don't intercept when typing in textarea / input
+  const tag = (e.target.tagName || "").toLowerCase();
+  if (tag === "textarea" || tag === "input" || tag === "select") {
+    if (e.key === "Escape") e.target.blur();
+    return;
+  }
+  if (els.helpOverlay.classList.contains("show")) {
+    if (e.key === "Escape" || e.key === "?") {
+      els.helpOverlay.classList.remove("show");
+      e.preventDefault();
+    }
+    return;
+  }
+
+  if (e.key === "ArrowLeft") { move(-1); e.preventDefault(); return; }
+  if (e.key === "ArrowRight") { move(1); e.preventDefault(); return; }
+  if (e.key === "?") { els.helpOverlay.classList.add("show"); e.preventDefault(); return; }
+  if (e.key === "h") {
+    toggleStatus(decisions[currentIndex], "hold");
+    return;
+  }
+  if (e.key === "k") {
+    toggleStatus(decisions[currentIndex], "skip");
+    return;
+  }
+  if (e.key === "r") {
+    const det = els.cardHost.querySelector("details.rationale-toggle");
+    if (det) det.open = !det.open;
+    return;
+  }
+  // 1-9 picks option by index
+  if (/^[1-9]$/.test(e.key)) {
+    const idx = parseInt(e.key, 10) - 1;
+    const d = decisions[currentIndex];
+    if (d && d.options[idx]) {
+      const radio = els.cardHost.querySelector(`input[name="opt-${d.id}"][value="${d.options[idx].key}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    }
+  }
+});
+
+/* Help overlay */
+els.help.addEventListener("click", () => els.helpOverlay.classList.add("show"));
+els.helpOverlay.addEventListener("click", (e) => {
+  if (e.target === els.helpOverlay) els.helpOverlay.classList.remove("show");
+});
+
+/* Reset */
+els.reset.addEventListener("click", () => {
+  if (!confirm("Reset all selections and notes? This cannot be undone.")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  for (const k in state) delete state[k];
+  renderCard();
+  renderMinimap();
+  updateProgress();
+});
+
+/* Export */
+function buildResultJson() {
+  const out = {};
+  decisions.forEach(d => {
+    out[d.id] = {
+      choice: state[d.id]?.choice || null,
+      comment: state[d.id]?.comment || null,
+    };
+  });
+  return out;
+}
+
+els.copyJson.addEventListener("click", async () => {
+  await navigator.clipboard.writeText(JSON.stringify(buildResultJson(), null, 2));
+  showToast("JSON copied to clipboard");
+});
+
+if (isServerMode) {
+  els.submit.hidden = false;
+  // Submit becomes primary; Copy buttons stay as fallback
+  els.copyMd.classList.remove("btn-primary");
+  els.copyMd.classList.add("btn-outline");
+
+  els.submit.addEventListener("click", async () => {
+    const data = buildResultJson();
+    els.submit.disabled = true;
+    const original = els.submit.textContent;
+    els.submit.textContent = "Submitting...";
+    try {
+      const resp = await fetch("/api/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!resp.ok) {
+        const errText = await resp.text();
+        throw new Error(errText || `HTTP ${resp.status}`);
+      }
+      const body = await resp.json().catch(() => ({}));
+      showToast(`Saved${body.saved_to ? " to " + body.saved_to : ""}. Safe to close the tab.`);
+      els.submit.textContent = "✓ Submitted";
+    } catch (err) {
+      showToast("Submit failed: " + err.message);
+      els.submit.disabled = false;
+      els.submit.textContent = original;
+    }
+  });
+}
+
+els.copyMd.addEventListener("click", async () => {
+  const lines = [`# ${SPEC.title || "Decision Board"} — results`, ""];
+  if (SPEC.subtitle) {
+    lines.push(`> ${SPEC.subtitle}`, "");
+  }
+  lines.push(`> Exported: ${new Date().toISOString().slice(0, 16).replace("T", " ")}`, "");
+  decisions.forEach(d => {
+    const choice = state[d.id]?.choice;
+    let label;
+    if (!choice) label = "_(undecided)_";
+    else if (choice === "hold") label = "**hold**";
+    else if (choice === "skip") label = "_(skipped)_";
+    else {
+      const opt = d.options.find(o => o.key === choice);
+      const text = opt ? opt.label.replace(/<[^>]+>/g, "") : choice;
+      label = `${choice}. ${text}${opt && opt.cost ? ` _(cost: ${opt.cost})_` : ""}`;
+    }
+    const cat = d.category ? ` _(${d.category})_` : "";
+    lines.push(`## ${d.id}. ${d.title}${cat}`);
+    lines.push("");
+    lines.push(`- Choice: ${label}`);
+    const comment = state[d.id]?.comment;
+    if (comment && comment.trim()) {
+      lines.push(`- Notes:`);
+      comment.split("\n").forEach(l => lines.push(`  > ${l}`));
+    }
+    lines.push("");
+  });
+  await navigator.clipboard.writeText(lines.join("\n"));
+  showToast("Markdown copied to clipboard");
+});
+
+/* Init */
+renderHeader();
+renderFilterBar();
+updateProgress();
+renderCard();
+renderMinimap();
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "skill_name": "decision-board",
+  "evals": [
+    {
+      "id": 1,
+      "name": "microservice-libs",
+      "prompt": "I'm starting a new payments microservice and need to lock in 5 library/tooling decisions before I scaffold the repo. Help me compare and pick. I want to see the trade-offs visually instead of just reading a list. Decisions:\n\n1. HTTP client — (a) requests + manual retry (recommended, 0 new deps, ~30 lines retry helper), (b) httpx with built-in retries (1 new dep, async-ready)\n2. Logging format — (a) plain text (0 cost), (b) structured JSON via structlog (recommended, 1 dep + log shipper config)\n3. Test framework — (a) unittest stdlib (0 deps), (b) pytest (recommended, 1 dev dep, fixtures + parametrize)\n4. Dependency manager — (a) poetry (mature, slow), (b) uv (recommended, ~10x faster), (c) pip-tools (minimal)\n5. Containerization — (a) Dockerfile (recommended, standard), (b) nix flake (reproducible, steeper), (c) none — local-only for now\n\nEnd with a markdown summary of what I picked.",
+      "expected_output": "Some interactive way to step through the 5 decisions (HTML wizard preferred), plus a final markdown summary of choices.",
+      "files": [],
+      "assertions": [
+        {"text": "summary.md exists in the output directory"},
+        {"text": "All 5 decisions are referenced in produced artifacts (HTTP client, Logging, Test framework, Dependency manager, Containerization)"},
+        {"text": "Each decision lists at least 2 options with labels"},
+        {"text": "Recommended option is flagged for each decision (matches the prompt's recommendations)"},
+        {"text": "Output explains how the user communicates their picks back"},
+        {"text": "An HTML file is produced that lets the user compare options visually"},
+        {"text": "Produced HTML has no references to external script/style URLs (self-contained)"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "cli-writing-audit",
+      "prompt": "We did a UX writing audit on our CLI tool and found 8 inconsistencies that each need a call. I want to step through them, see the current vs proposed for each, leave notes where I'm unsure, and end up with a structured result I can hand to whoever's doing the code edits.\n\n1. Pager format — (a) [n/n] recommended (~4 lines, matches majority), (b) n-n of n (~6 lines), (c) Showing n-n of n (verbose, dialog-only)\n2. Size unit spacing — (a) '5 MB' SI style, (b) '5MB' compact, (c) leave as-is (recommended; SI for size, compact for age is convention)\n3. Error prefix — (a) 'error:' lowercase (recommended, matches Go convention), (b) 'Error:' capitalized, (c) mix by severity\n4. Sentence punctuation — (a) labels no period, full sentences yes (recommended), (b) always period, (c) never period\n5. Truncate suffix — (a) '...' three chars (recommended, consistent), (b) '..' two chars (current in some places)\n6. Empty / scanning state — (a) policy: '-' before scan, '0 B' if zero, '(empty)' for empty containers (recommended), (b) keep current 5-way mix\n7. Safety dot accessibility — (a) shape + color (●/◐/◆) (recommended, ~8% colorblind users), (b) color only\n8. Footer verb casing — (a) lowercase ('up', 'select') (recommended, majority pattern), (b) Title Case\n\nGive me something I can click through and export.",
+      "expected_output": "Interactive HTML or equivalent that lets the user pick per decision with the option to leave notes; export as markdown or JSON at the end.",
+      "files": [],
+      "assertions": [
+        {"text": "summary.md exists in the output directory"},
+        {"text": "All 8 decisions are referenced in produced artifacts"},
+        {"text": "Each of the 8 decisions presents both the current state and the proposed options"},
+        {"text": "Output supports per-decision notes (textarea or equivalent)"},
+        {"text": "An HTML file is produced that the user can click through"},
+        {"text": "Produced HTML has no references to external script/style URLs (self-contained)"},
+        {"text": "Output explains how the user exports their picks (markdown or JSON)"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "small-design-set",
+      "prompt": "Quick one — I have 4 small design decisions from a meeting and just want to think them over briefly before picking. Nothing fancy needed.\n\n1. Primary button — (a) flat (recommended, matches design system), (b) raised (older style)\n2. Empty state copy — (a) 'No items yet' (recommended), (b) 'Nothing here'\n3. Loading indicator — (a) spinner (recommended, simple), (b) skeleton screen (more work)\n4. Form layout — (a) single column (recommended, mobile-friendly), (b) two columns (faster to scan on desktop)\n\nWhat do you suggest?",
+      "expected_output": "Inline answer with brief comparison and a recommended pick per item. The skill should NOT be invoked for only 4 decisions — its SKILL.md states a 5+ threshold. Tests appropriate non-invocation.",
+      "files": [],
+      "assertions": [
+        {"text": "summary.md exists with the response"},
+        {"text": "All 4 decisions get a direct recommendation in summary.md"},
+        {"text": "Each recommendation is justified briefly"},
+        {"text": "No HTML wizard is generated (the skill's threshold is 5+ items, this is 4)"},
+        {"text": "If a wizard was generated anyway, the agent explained why it overrode the threshold"}
+      ]
+    }
+  ]
+}
