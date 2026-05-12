@@ -8,13 +8,6 @@
   },
   "plugins": [
     {
-      "name": "check-agent-doc",
-      "source": "./plugins/check-agent-doc",
-      "description": "Evaluate an agent-facing markdown doc against an 8-axis rubric (purpose, scope, procedure, input, output, failure recovery, conflict, context economy) and report Pass/Partial/Fail with evidence and short fix examples. Use whenever the user asks to review, audit, lint, or check a SKILL.md, CLAUDE.md, system prompt, convention guide, or any markdown that an AI agent will read.",
-      "version": "0.0.1",
-      "category": "productivity"
-    },
-    {
       "name": "code-history",
       "source": "./plugins/code-history",
       "description": "Trace git history of specific code \u2014 find when functions, patterns, or files were added, modified, or removed, and explain the intent behind each change.",
