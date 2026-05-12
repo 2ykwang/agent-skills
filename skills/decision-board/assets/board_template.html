@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>decision-board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-soft:#f6f7f8;
+  --bg-sunken:#fafbfc;
+  --fg:#1f2328;
+  --fg-muted:#656d76;
+  --fg-faint:#8c959f;
+  --line:#d0d7de;
+  --line-soft:#e5e7eb;
+  --accent:#0550ae;
+  --accent-soft:#ddf4ff;
+  --rec:#1a7f37;
+  --rec-soft:#dafbe1;
+  --del:#82071e;
+  --code-bg:#eff1f3;
+  --hl-add-bg:#dafbe1;
+  --hl-add-fg:#1a7f37;
+  --hl-del-bg:#ffebe9;
+  --hl-del-fg:#82071e;
+  --shadow:0 0 0 1px var(--line);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg-soft);color:var(--fg);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{min-height:100vh}
+button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none;cursor:pointer;padding:0}
+
+.shell{max-width:1240px;margin:0 auto;padding:24px 28px 40px}
+
+.topbar{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:18px}
+.topbar h1{margin:0;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.04em;color:var(--fg-muted);text-transform:uppercase}
+.topbar .sub{font-size:12px;color:var(--fg-muted);margin-left:8px;font-weight:400}
+.progress{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--fg-muted)}
+
+/* layout: sidebar nav + main */
+.layout{display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start}
+@media (max-width: 900px){
+  .layout{grid-template-columns:1fr}
+  .sidenav{position:static;max-height:none}
+}
+.sidenav{position:sticky;top:24px;background:var(--bg);border:1px solid var(--line);max-height:calc(100vh - 48px);overflow-y:auto}
+.sidenav-h{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-faint);text-transform:uppercase;letter-spacing:.06em;padding:10px 14px 8px;border-bottom:1px solid var(--line-soft)}
+.sidenav-list{display:flex;flex-direction:column}
+.sidenav-item{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:baseline;padding:9px 14px;border:none;background:none;text-align:left;cursor:pointer;font:inherit;color:var(--fg);border-bottom:1px solid var(--line-soft);border-left:2px solid transparent;width:100%;line-height:1.35}
+.sidenav-item:last-child{border-bottom:none}
+.sidenav-item:hover{background:var(--bg-sunken)}
+.sidenav-item[aria-current="true"]{background:var(--accent-soft);border-left-color:var(--accent)}
+.sidenav-item .num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-faint)}
+.sidenav-item[aria-current="true"] .num{color:var(--accent)}
+.sidenav-item .lbl{font-size:13px;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:anywhere;word-break:break-word}
+.sidenav-item .badge{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--fg-faint);width:1.2em;text-align:center}
+.sidenav-item .badge.picked{color:var(--accent)}
+.sidenav-item .badge.hold{color:var(--del)}
+.sidenav-foot{padding:8px 14px;border-top:1px solid var(--line-soft);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-muted)}
+
+.dheader{padding:6px 0 14px;border-bottom:1px solid var(--line-soft);margin-bottom:18px}
+.dmeta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.dmeta .sep{margin:0 6px;color:var(--line)}
+.dtitle{font-size:22px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+.dsummary{font-size:15px;color:var(--fg);margin:0;max-width:78ch;line-height:1.5}
+
+.pane{padding:14px 16px;min-width:0;background:var(--bg);border:1px solid var(--line);margin-top:14px}
+.pane-h{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-faint);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.pane-h .pane-hint{color:var(--fg-faint);font-weight:400;text-transform:none;letter-spacing:0;font-family:'Inter',sans-serif;font-size:11px}
+
+/* current is contextual — toned down so attention lands on options */
+.current-pane{background:var(--bg-sunken);border-color:var(--line-soft)}
+.current-pane .pane-h span:first-child{color:var(--fg-muted)}
+.current-pane .current-body{font-size:12.5px;color:var(--fg-muted)}
+
+/* options is the action — pane title weighs more */
+.options-pane{max-width:920px}
+.options-pane .pane-h span:first-child{color:var(--fg);font-weight:600;font-size:12px}
+
+.current-body{font-size:13px}
+.current-body .md pre{background:var(--bg);border-color:var(--line-soft)}
+
+.opts{display:flex;flex-direction:column;gap:0}
+.opt-wrap{border-bottom:1px solid var(--line-soft)}
+.opt-wrap:last-child{border-bottom:none}
+.opt-wrap.is-selected{box-shadow:inset 3px 0 0 var(--accent)}
+.opt{display:grid;grid-template-columns:auto auto 1fr auto auto;gap:12px;align-items:center;padding:10px 12px;cursor:pointer;transition:background .08s;position:relative}
+.opts.no-meta .opt{grid-template-columns:auto auto 1fr auto}
+.opt:hover{background:var(--bg-sunken)}
+.opt-wrap.is-selected .opt{background:var(--bg-sunken)}
+.opt .key{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:400;color:var(--fg-faint)}
+.opt-wrap.is-selected .opt .key{color:var(--accent);font-weight:500}
+.opt .label{font-size:14px;color:var(--fg);line-height:1.4;min-width:0;font-weight:500}
+.opt-wrap.is-selected .opt .label{font-weight:600}
+.opt .cost{font-size:12px;color:var(--fg-muted);font-family:'JetBrains Mono',monospace;line-height:1.4;min-width:0;overflow-wrap:break-word}
+.opt .right{display:flex;align-items:center;gap:6px;white-space:nowrap;justify-content:flex-end}
+.rec{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--rec);background:var(--rec-soft);padding:1px 5px;border-radius:2px;letter-spacing:.04em;font-weight:600;text-transform:uppercase}
+.opt-badge{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--fg-muted);background:var(--bg-sunken);border:1px solid var(--line-soft);padding:1px 5px;border-radius:2px;letter-spacing:.03em;text-transform:lowercase}
+.opt-badge.rev-hard{color:var(--del);background:var(--hl-del-bg);border-color:var(--hl-del-bg)}
+.opt .radio{width:12px;height:12px;border:1px solid var(--line);border-radius:50%;display:inline-block;flex:none}
+.opt-wrap.is-selected .opt .radio{border-color:var(--accent);background:radial-gradient(circle,var(--accent) 0 3.5px,transparent 4.5px)}
+
+
+/* inline preview — always visible, hierarchically subordinate to option row.
+   Left border anchors the preview to its option visually.
+   max-height generous so most content fits; long previews get internal scroll. */
+.opt-preview{display:block;padding:10px 16px 14px 32px;background:var(--bg-sunken);border-top:1px dashed var(--line-soft);border-left:3px solid var(--line);font-size:12.5px;color:var(--fg-muted);max-height:500px;overflow-y:auto;line-height:1.55}
+.opt-wrap.is-selected .opt-preview{border-left-color:var(--accent)}
+.opt-preview .md strong{color:var(--fg)}
+.opt-preview:empty{display:none}
+
+.md strong{font-weight:600;color:var(--accent)}
+.dtitle.md strong, .md h1 strong, .md h2 strong, .md h3 strong{color:var(--fg)}
+.md em{font-style:normal;font-variant:small-caps;letter-spacing:.04em;color:var(--fg-muted);font-weight:500}
+.md code{font-family:'JetBrains Mono',monospace;font-size:.92em;background:var(--code-bg);padding:0 4px;border-radius:2px;color:var(--fg)}
+.md del{color:var(--fg-faint);text-decoration:line-through}
+.md mark{background:var(--hl-add-bg);color:var(--fg);padding:0 2px;border-radius:2px}
+.md ins{background:var(--accent-soft);color:var(--fg);text-decoration:none;padding:0 2px;border-radius:2px}
+.md kbd{font-family:'JetBrains Mono',monospace;font-size:.85em;background:var(--bg);border:1px solid var(--line);border-bottom-width:2px;border-radius:3px;padding:0 4px;color:var(--fg)}
+
+.md h1, .md h2, .md h3{font-family:'Inter',sans-serif;color:var(--fg);font-weight:600;line-height:1.25;margin:14px 0 6px}
+.md h1{font-size:16px;letter-spacing:-.005em}
+.md h2{font-size:14px;letter-spacing:0}
+.md h3{font-size:12.5px;color:var(--fg-muted);text-transform:uppercase;letter-spacing:.05em;font-family:'JetBrains Mono',monospace}
+.md > *:first-child{margin-top:0}
+.md > *:last-child{margin-bottom:0}
+.md p{margin:0 0 8px}
+.md p:last-child{margin-bottom:0}
+.md ul, .md ol{margin:0 0 8px;padding-left:20px}
+.md ul li, .md ol li{margin:1px 0;padding-left:2px}
+.md ul{list-style:disc}
+.md ol{list-style:decimal}
+.md ul ul, .md ol ol, .md ul ol, .md ol ul{margin:1px 0}
+.md blockquote{margin:0 0 8px;padding:2px 12px;border-left:2px solid var(--line);color:var(--fg-muted);background:var(--bg-sunken)}
+.md blockquote > *:last-child{margin-bottom:0}
+.md pre{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.5;background:var(--bg-sunken);border:1px solid var(--line-soft);padding:10px 12px;margin:0 0 8px;white-space:pre;word-break:normal;color:var(--fg);overflow-x:auto;border-radius:2px}
+.md pre code{background:none;padding:0;border-radius:0;font-size:inherit;color:inherit}
+.md pre:last-child{margin-bottom:0}
+.md .diff-add{display:block;background:var(--hl-add-bg);color:var(--hl-add-fg);margin:0 -12px;padding:0 12px}
+.md .diff-del{display:block;background:var(--hl-del-bg);color:var(--hl-del-fg);margin:0 -12px;padding:0 12px}
+
+.foot{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.rat-line{display:flex;align-items:center;gap:8px}
+.rat-toggle{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-muted);text-transform:uppercase;letter-spacing:.05em;padding:2px 0;border-bottom:1px dashed var(--line)}
+.rat-toggle:hover{color:var(--fg)}
+.rat-body{display:none;background:var(--bg);border:1px solid var(--line);border-left:2px solid var(--accent);padding:10px 14px;font-size:13.5px;color:var(--fg);max-width:90ch}
+.rat-body.is-open{display:block}
+
+.statusbar{display:grid;grid-template-columns:auto auto 1fr;gap:10px;align-items:start}
+.btn-hold{padding:5px 10px;font-size:12px;color:var(--fg-muted);border:1px solid var(--line);background:var(--bg)}
+.btn-hold:hover{background:var(--bg-sunken);color:var(--fg)}
+.btn-hold.is-on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.cur-state{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--fg-muted);padding:5px 0}
+.cur-state .v{color:var(--fg);font-weight:600}
+.comment{width:100%;border:1px solid var(--line);background:var(--bg);padding:6px 10px;font:inherit;font-size:13px;color:var(--fg);resize:vertical;min-height:32px;font-family:inherit}
+.comment:focus{outline:none;border-color:var(--accent)}
+
+.nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--line);gap:12px}
+.nav-prev{justify-self:start}
+.nav-next{justify-self:end}
+.nav-mid{justify-self:center;white-space:nowrap}
+.btn{padding:6px 12px;border:1px solid var(--line);background:var(--bg);font-size:13px;color:var(--fg);font-family:inherit}
+.btn:hover{background:var(--bg-sunken)}
+.btn[disabled]{color:var(--fg-faint);cursor:not-allowed}
+.btn[disabled]:hover{background:var(--bg)}
+.btn-nav{padding:8px 16px;font-weight:500;border-color:var(--fg-muted)}
+.btn-nav:hover{background:var(--bg-sunken);border-color:var(--fg)}
+.btn-nav[disabled]{border-color:var(--line)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:#033d8c}
+.btn-primary[disabled]{background:var(--bg-sunken);color:var(--fg-faint);border-color:var(--line)}
+.btn-cancel{color:var(--fg-muted);border-color:var(--line);margin-right:24px}
+.btn-cancel:hover{color:var(--del);border-color:var(--del);background:var(--bg)}
+.footer-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line-soft);flex-wrap:wrap}
+.footer-actions:empty{display:none}
+
+.summary-state{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-muted)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(60px);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:3px;font-size:13px;opacity:0;transition:opacity .15s, transform .15s;pointer-events:none;z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="app-view" id="app">
+    <div class="topbar">
+      <div>
+        <h1 id="boardTitle"></h1>
+        <span class="sub" id="boardSub"></span>
+      </div>
+      <div class="progress">
+        <span id="progNum"></span>
+      </div>
+    </div>
+
+    <div class="layout">
+    <aside class="sidenav" id="sidenav">
+      <div class="sidenav-h">Decisions</div>
+      <div class="sidenav-list" id="sidenavList"></div>
+      <div class="sidenav-foot" id="sidenavFoot"></div>
+    </aside>
+    <div class="main-col">
+
+    <div class="dheader">
+      <div class="dmeta">
+        <span id="dId"></span><span class="sep">·</span><span id="dCat"></span>
+      </div>
+      <h2 class="dtitle md" id="dTitle"></h2>
+      <p class="dsummary md" id="dSummary"></p>
+    </div>
+
+    <section class="pane current-pane" id="currentPane">
+      <div class="pane-h"><span>Current</span></div>
+      <div class="current-body md" id="currentBody"></div>
+    </section>
+
+    <section class="pane options-pane">
+      <div class="pane-h"><span>Options</span><span class="pane-hint">click to pick · click again to clear</span></div>
+      <div class="opts" id="optsList"></div>
+    </section>
+
+    <div class="foot">
+      <div class="rat-line">
+        <button class="rat-toggle" id="ratToggle">Rationale ▸ expand</button>
+      </div>
+      <div class="rat-body md" id="ratBody"></div>
+
+      <div class="statusbar">
+        <button class="btn-hold" id="btnHold" title="Flag this for follow-up — the agent should circle back to it.">Hold for follow-up</button>
+        <div class="cur-state">state: <span class="v" id="curState">undecided</span></div>
+        <textarea class="comment" id="commentBox" placeholder="comment (optional)"></textarea>
+      </div>
+    </div>
+
+    <div class="nav">
+      <div class="nav-prev">
+        <button class="btn btn-nav" id="btnPrev">← Previous question</button>
+      </div>
+      <div class="nav-mid summary-state" id="summaryState"></div>
+      <div class="nav-next">
+        <button class="btn btn-nav" id="btnNext">Next question →</button>
+      </div>
+    </div>
+
+    <div class="footer-actions">
+      <button class="btn" id="btnCopyJson" hidden>Copy JSON</button>
+      <button class="btn" id="btnCopyMd" hidden>Copy Markdown</button>
+      <button class="btn btn-cancel" id="btnCancel" hidden title="Abort this session and tell the agent we're not deciding (ESC)">Cancel</button>
+      <button class="btn btn-primary" id="btnSubmit" hidden>Submit</button>
+    </div>
+
+    </div><!-- /main-col -->
+    </div><!-- /layout -->
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* SPEC_PLACEHOLDER */
+
+/* ============================================================
+   markdown parser — block + inline (no deps)
+   ============================================================ */
+
+function escapeHtml(s){
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+const INLINE_HTML_WHITELIST = ['mark','ins','del','kbd'];
+
+function makeStore(){
+  const arr = [];
+  return {
+    push(v){ arr.push(v); return arr.length-1; },
+    get(i){ return arr[i]; },
+    size(){ return arr.length; },
+  };
+}
+
+function renderInline(src){
+  if(src == null) return '';
+  let s = String(src);
+
+  const htmls = makeStore();
+  s = s.replace(/<br\s*\/?>/gi, ()=> {
+    const i = htmls.push('<br>');
+    return '  H'+i+'  ';
+  });
+  const tagPattern = new RegExp(
+    '<('+INLINE_HTML_WHITELIST.join('|')+')>([^<]*)</\\1>',
+    'gi'
+  );
+  s = s.replace(tagPattern, (_, tag, inner)=>{
+    const t = tag.toLowerCase();
+    const i = htmls.push({tag:t, inner: inner});
+    return '  H'+i+'  ';
+  });
+
+  const codes = makeStore();
+  s = s.replace(/`([^`\n]+)`/g, (_, c)=>{
+    const i = codes.push(c);
+    return '  C'+i+'  ';
+  });
+
+  s = escapeHtml(s);
+
+  s = s.replace(/  +\n/g, '<br>\n');
+
+  s = s.replace(/~~([^~\n]+)~~/g, '<del>$1</del>');
+  s = s.replace(/\*\*([^*\n]+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/(^|[^\*\w])\*([^\*\n]+?)\*(?!\*)/g, '$1<em>$2</em>');
+
+  s = s.replace(/  C(\d+)  /g, (_, i)=>{
+    return '<code>'+escapeHtml(codes.get(+i))+'</code>';
+  });
+
+  s = s.replace(/  H(\d+)  /g, (_, i)=>{
+    const v = htmls.get(+i);
+    if(typeof v === 'string') return v;
+    return '<'+v.tag+'>'+renderInline(v.inner)+'</'+v.tag+'>';
+  });
+
+  return s;
+}
+
+function renderBlocks(src){
+  if(src == null) return '';
+  let s = String(src).replace(/\r\n?/g, '\n');
+
+  const fences = makeStore();
+  s = s.replace(/(^|\n)```([a-zA-Z0-9_+-]*)\n([\s\S]*?)\n```(?=\n|$)/g,
+    (_, pre, lang, code)=>{
+      const i = fences.push({lang: lang.toLowerCase(), code: code});
+      // Pad with blank lines so the placeholder always lands on its own block
+      // during the blank-line split below. Otherwise a fence written right
+      // after a paragraph (no leading blank line in source) gets absorbed into
+      // that paragraph and the placeholder leaks into rendered output.
+      return pre + '\n\n  F'+i+'  \n\n';
+    });
+
+  const blocks = s.split(/\n\s*\n+/);
+
+  const out = [];
+  for(const raw of blocks){
+    const blk = raw.replace(/^\n+|\n+$/g, '');
+    if(!blk) continue;
+    out.push(renderBlock(blk, fences));
+  }
+  return out.join('\n');
+}
+
+function renderBlock(blk, fences){
+  const m = blk.match(/^  F(\d+)  $/);
+  if(m){
+    return renderFence(fences.get(+m[1]));
+  }
+
+  const h = blk.match(/^(#{1,3})\s+(.+)$/s);
+  if(h && !h[2].includes('\n')){
+    const level = h[1].length;
+    return '<h'+level+'>'+renderInline(h[2])+'</h'+level+'>';
+  }
+
+  if(blk.split('\n').every(l=> /^>\s?/.test(l) || l === '>')){
+    const inner = blk.split('\n').map(l=> l.replace(/^>\s?/, '')).join('\n');
+    return '<blockquote>'+renderBlocks(inner)+'</blockquote>';
+  }
+
+  if(/^[-*]\s+/.test(blk)){
+    return renderList(blk, 'ul');
+  }
+  if(/^\d+\.\s+/.test(blk)){
+    return renderList(blk, 'ol');
+  }
+
+  return '<p>'+renderInline(blk)+'</p>';
+}
+
+function renderList(blk, type){
+  const lines = blk.split('\n');
+  const items = [];
+  let cur = null;
+  const itemRe = type === 'ul' ? /^[-*]\s+(.*)$/ : /^\d+\.\s+(.*)$/;
+  for(const line of lines){
+    const m = line.match(itemRe);
+    if(m){
+      if(cur !== null) items.push(cur);
+      cur = m[1];
+    } else if(cur !== null && /^\s+\S/.test(line)){
+      cur += '\n' + line.replace(/^\s+/, '');
+    } else if(cur !== null && line.trim() === ''){
+      cur += '\n';
+    }
+  }
+  if(cur !== null) items.push(cur);
+
+  const lis = items.map(it=>{
+    return '<li>'+renderInline(it.trim())+'</li>';
+  }).join('');
+  return '<'+type+'>'+lis+'</'+type+'>';
+}
+
+function renderFence(f){
+  const lang = (f.lang || '').toLowerCase();
+  if(lang === 'diff'){
+    const lines = f.code.split('\n').map(line=>{
+      const safe = escapeHtml(line);
+      if(line.startsWith('+')) return '<span class="diff-add">'+safe+'</span>';
+      if(line.startsWith('-')) return '<span class="diff-del">'+safe+'</span>';
+      return safe;
+    });
+    return '<pre><code>'+lines.join('\n')+'</code></pre>';
+  }
+  return '<pre><code>'+escapeHtml(f.code)+'</code></pre>';
+}
+
+function renderMd(src){ return renderBlocks(src); }
+function renderMdInline(src){ return renderInline(src); }
+
+/* ============================================================
+   state + persistence
+   ============================================================ */
+
+/* Storage key = title + decision ids fingerprint. Two boards with the same
+   title but different decision sets get distinct keys; renaming a decision
+   or adding/removing one invalidates the key and starts fresh. */
+const STORAGE_KEY = "decision-board:" +
+  (SPEC.title || "untitled") + "|" +
+  SPEC.decisions.map(d => String(d.id)).join(",");
+
+const state = {
+  idx: 0,
+  choices: {},
+};
+
+SPEC.decisions.forEach(d=>{
+  state.choices[String(d.id)] = { value:null, comment:'' };
+});
+
+/* Restore from localStorage, guarded against stale data:
+   - drop entries whose decision id no longer exists in the spec
+   - reset `value` to null if the stored choice isn't a current option key
+     and isn't the special 'hold' value (option keys can change between
+     versions of the spec; stale ones must not bleed into the result) */
+try {
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+  if (saved && typeof saved === "object" && saved.choices) {
+    SPEC.decisions.forEach(d => {
+      const sid = String(d.id);
+      const stored = saved.choices[sid];
+      if (!stored) return;
+      const validKeys = new Set(d.options.map(o => o.key));
+      const v = stored.value;
+      const valueOk = v == null || v === 'hold' || validKeys.has(v);
+      state.choices[sid].value = valueOk ? (v ?? null) : null;
+      state.choices[sid].comment = stored.comment ?? '';
+    });
+  }
+} catch (e) { /* ignore corrupt storage */ }
+
+function save(){
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ choices: state.choices }));
+  } catch (e) { /* quota etc — non-fatal */ }
+}
+
+const isServerMode = location.protocol === "http:" || location.protocol === "https:";
+
+const $ = (id)=>document.getElementById(id);
+
+function renderSideNav(){
+  // Sidebar list of all decisions. Each row: number, title (truncated), state
+  // badge. Click jumps. This replaces the row of dots — sidebar is what the
+  // user actually expects when there are multiple decisions to triage.
+  const el = $('sidenavList');
+  el.innerHTML = '';
+  SPEC.decisions.forEach((d, i)=>{
+    const id = String(d.id);
+    const v = state.choices[id].value;
+    let badge = '○', cls = '';
+    if (v === 'hold'){ badge = '⊙'; cls = 'hold'; }
+    else if (v){ badge = '●'; cls = 'picked'; }
+    const plainTitle = String(d.title || '').replace(/[*`~]/g, '').trim() || '(untitled)';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'sidenav-item';
+    if (i === state.idx) btn.setAttribute('aria-current', 'true');
+    btn.title = plainTitle;
+    btn.innerHTML = `<span class="num">${i+1}</span><span class="lbl">${escapeHtml(plainTitle)}</span><span class="badge ${cls}">${badge}</span>`;
+    btn.addEventListener('click', ()=>{
+      if (state.idx === i) return;
+      state.idx = i;
+      renderDecision();
+      renderTop();
+    });
+    el.appendChild(btn);
+  });
+  $('sidenavFoot').textContent = summaryState();
+}
+
+function summaryState(){
+  const vals = Object.values(state.choices);
+  const decided = vals.filter(c=>c.value && c.value!=='hold').length;
+  const held = vals.filter(c=>c.value==='hold').length;
+  const undecided = SPEC.decisions.length - decided - held;
+  return `decided ${decided} · hold ${held} · undecided ${undecided}`;
+}
+
+function renderTop(){
+  $('boardTitle').innerHTML = renderMdInline(SPEC.title);
+  $('boardSub').textContent = SPEC.subtitle || '';
+  $('progNum').textContent = `${state.idx+1} / ${SPEC.decisions.length}`;
+  renderSideNav();
+}
+
+function renderDecision(){
+  const d = SPEC.decisions[state.idx];
+  const id = String(d.id);
+  const ch = state.choices[id];
+
+  $('dId').textContent = `Question ${state.idx + 1}`;
+  $('dCat').textContent = d.category || '';
+  $('dTitle').innerHTML = renderMdInline(d.title);
+  $('dSummary').innerHTML = renderMdInline(d.summary || '');
+
+  // Current pane: hide entirely when there's no context to show.
+  // An empty box with just a header reads as a dead element across non-
+  // engineering domains (operations triage, etc.) where current is rare.
+  const hasCurrent = !!(d.context && String(d.context).trim());
+  $('currentPane').style.display = hasCurrent ? '' : 'none';
+  if(hasCurrent) $('currentBody').innerHTML = renderMd(d.context);
+
+  const optsEl = $('optsList');
+  optsEl.innerHTML = '';
+  // If no option on this decision carries reversibility/recommended, suppress
+  // the empty right slot so labels/cost get the full width.
+  const anyMeta = d.options.some(o => o.reversibility || o.recommended);
+  optsEl.classList.toggle('no-meta', !anyMeta);
+  d.options.forEach((o)=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'opt-wrap';
+    if(ch.value === o.key) wrap.classList.add('is-selected');
+    const revBadge = o.reversibility
+      ? `<span class="opt-badge rev-${escapeHtml(o.reversibility)}" title="reversibility">${escapeHtml(o.reversibility)}</span>`
+      : '';
+    const rightInner = anyMeta
+      ? `<div class="right">${revBadge}${o.recommended ? '<span class="rec">recommended</span>' : ''}</div>`
+      : '';
+    wrap.innerHTML = `
+      <div class="opt">
+        <span class="radio"></span>
+        <span class="key">${escapeHtml(o.key)}</span>
+        <div class="label md">${renderMdInline(o.label || '')}</div>
+        <div class="cost md">${renderMdInline(o.cost || '')}</div>
+        ${rightInner}
+      </div>
+      <div class="opt-preview md">${renderMd(o.preview || '_(no preview)_')}</div>
+    `;
+    wrap.querySelector('.opt').addEventListener('click', ()=>{
+      ch.value = (ch.value === o.key) ? null : o.key;
+      save();
+      renderDecision();
+      renderTop();
+    });
+    optsEl.appendChild(wrap);
+  });
+
+  const hasRationale = !!(d.rationale && String(d.rationale).trim());
+  $('ratBody').innerHTML = hasRationale ? renderMd(d.rationale) : '';
+  // Surface rationale by default when present; hide the toggle entirely when
+  // the decision has no rationale so it doesn't render as a dead button.
+  if(hasRationale){
+    $('ratToggle').style.display = '';
+    $('ratBody').classList.add('is-open');
+    $('ratToggle').textContent = 'Rationale ▾ collapse';
+  } else {
+    $('ratToggle').style.display = 'none';
+    $('ratBody').classList.remove('is-open');
+  }
+
+  $('commentBox').value = ch.comment || '';
+
+  $('btnHold').classList.toggle('is-on', ch.value === 'hold');
+
+  let label = 'undecided';
+  if(ch.value === 'hold') label = 'hold';
+  else if(ch.value) label = `option ${String(ch.value).toUpperCase()}`;
+  $('curState').textContent = label;
+
+  renderFooter();
+}
+
+function renderFooter(){
+  $('summaryState').textContent = summaryState();
+  $('btnPrev').disabled = (state.idx === 0);
+  $('btnNext').disabled = (state.idx === SPEC.decisions.length - 1);
+}
+
+/* ============================================================
+   result building — wrapped under `decisions`, string id keys
+   matches serve.py expectation and SKILL.md result schema
+   ============================================================ */
+
+function buildResultJson(){
+  const decisionsMap = {};
+  let decided = 0, held = 0, undecided = 0;
+  SPEC.decisions.forEach(d=>{
+    const ch = state.choices[String(d.id)];
+    const choice = ch.value;
+    decisionsMap[String(d.id)] = {
+      choice: choice,
+      comment: ch.comment || '',
+    };
+    if (choice === 'hold') held++;
+    else if (choice) decided++;
+    else undecided++;
+  });
+  return {
+    title: SPEC.title || '',
+    submitted_at: new Date().toISOString(),
+    decisions: decisionsMap,
+    meta: { counts: { decided, hold: held, undecided } },
+  };
+}
+
+/* ============================================================
+   events
+   ============================================================ */
+
+function showToast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 1800);
+}
+
+$('btnPrev').addEventListener('click', ()=>{
+  if(state.idx > 0){ state.idx--; renderDecision(); renderTop(); }
+});
+$('btnNext').addEventListener('click', ()=>{
+  if(state.idx < SPEC.decisions.length - 1){ state.idx++; renderDecision(); renderTop(); }
+});
+$('btnHold').addEventListener('click', ()=>{
+  const d = SPEC.decisions[state.idx];
+  const ch = state.choices[String(d.id)];
+  ch.value = (ch.value === 'hold') ? null : 'hold';
+  save();
+  renderDecision(); renderTop();
+});
+$('ratToggle').addEventListener('click', ()=>{
+  const b = $('ratBody');
+  const open = b.classList.toggle('is-open');
+  $('ratToggle').textContent = open ? 'Rationale ▾ collapse' : 'Rationale ▸ expand';
+});
+$('commentBox').addEventListener('input', (e)=>{
+  const d = SPEC.decisions[state.idx];
+  state.choices[String(d.id)].comment = e.target.value;
+  save();
+});
+
+$('btnCopyJson').addEventListener('click', async ()=>{
+  const json = JSON.stringify(buildResultJson(), null, 2);
+  try {
+    await navigator.clipboard.writeText(json);
+    showToast('JSON copied to clipboard');
+  } catch (e) {
+    showToast('Copy failed — see console');
+    console.log(json);
+  }
+});
+
+$('btnCopyMd').addEventListener('click', async ()=>{
+  const lines = [`# ${SPEC.title || 'Decision Board'} — results`, ''];
+  if (SPEC.subtitle) lines.push(`> ${SPEC.subtitle}`, '');
+  lines.push(`> Exported: ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`, '');
+  SPEC.decisions.forEach(d=>{
+    const ch = state.choices[String(d.id)];
+    const choice = ch.value;
+    let label;
+    if(!choice) label = '_(undecided)_';
+    else if(choice === 'hold') label = '**hold**';
+    else {
+      const opt = d.options.find(o=>o.key === choice);
+      const lbl = opt ? String(opt.label || '').replace(/[*`~]/g, '') : choice;
+      label = `${choice}. ${lbl}${opt && opt.cost ? ` _(cost: ${String(opt.cost).replace(/`/g,'')})_` : ''}`;
+    }
+    const cat = d.category ? ` _(${d.category})_` : '';
+    const plainTitle = String(d.title || '').replace(/[*`~]/g, '');
+    lines.push(`## ${d.id}. ${plainTitle}${cat}`);
+    lines.push('');
+    lines.push(`- Choice: ${label}`);
+    if (ch.comment && ch.comment.trim()) {
+      lines.push('- Notes:');
+      ch.comment.split('\n').forEach(l => lines.push(`  > ${l}`));
+    }
+    lines.push('');
+  });
+  const md = lines.join('\n');
+  try {
+    await navigator.clipboard.writeText(md);
+    showToast('Markdown copied to clipboard');
+  } catch (e) {
+    showToast('Copy failed — see console');
+    console.log(md);
+  }
+});
+
+/* Action visibility:
+   - Server mode: Submit + Cancel are the two terminal signals. Hide Copy.
+   - Static mode (no server): Copy is the only way to get results out.
+*/
+if (isServerMode) {
+  $('btnSubmit').hidden = false;
+  $('btnCancel').hidden = false;
+} else {
+  $('btnCopyJson').hidden = false;
+  $('btnCopyMd').hidden = false;
+}
+
+let _terminalSignalSent = false;  // once we've sent submit/cancel, stop pinging
+
+if (isServerMode) {
+  $('btnSubmit').addEventListener('click', async ()=>{
+    const data = buildResultJson();
+    const btn = $('btnSubmit');
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = 'Submitting...';
+    _terminalSignalSent = true;
+    try {
+      const resp = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!resp.ok) {
+        const errText = await resp.text();
+        throw new Error(errText || `HTTP ${resp.status}`);
+      }
+      const body = await resp.json().catch(()=>({}));
+      showToast(`Saved${body.saved_to ? ' to ' + body.saved_to : ''}. Safe to close the tab.`);
+      btn.textContent = '✓ Submitted';
+    } catch (err) {
+      showToast('Submit failed: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = original;
+      _terminalSignalSent = false;  // allow retry / heartbeat to resume
+    }
+  });
+
+  /* Cancel: explicit user signal that the board should abort. Distinct
+     from "I closed the tab" — this carries intent. */
+  async function sendCancel(){
+    if (_terminalSignalSent) return;
+    _terminalSignalSent = true;
+    const btn = $('btnCancel');
+    btn.disabled = true;
+    btn.textContent = 'Cancelling...';
+    try {
+      await fetch('/api/cancel', { method: 'POST' });
+      showToast('Cancelled. Safe to close the tab.');
+      btn.textContent = 'Cancelled';
+      $('btnSubmit').disabled = true;
+    } catch (err) {
+      showToast('Cancel failed: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = 'Cancel';
+      _terminalSignalSent = false;
+    }
+  }
+  $('btnCancel').addEventListener('click', sendCancel);
+
+  /* Heartbeat: tell the server we're still here. Background-tab timer
+     throttling can stretch the interval to ~1 minute, which is why the
+     server's heartbeat timeout is generous (60s). visibilitychange forces
+     an immediate ping when the tab comes back. */
+  function ping(){
+    if (_terminalSignalSent) return;
+    fetch('/api/heartbeat', { method: 'POST', keepalive: true }).catch(()=>{});
+  }
+  ping();
+  setInterval(ping, 5000);
+  document.addEventListener('visibilitychange', ()=>{
+    if (document.visibilityState === 'visible') ping();
+  });
+}
+
+/* Keyboard:
+   - silent ←/→ for prev/next decision (arrow keys are universal nav)
+   - ESC as explicit cancel signal (mirrors AskQuestion convention)
+   No banner or help overlay — these are conventional, not custom shortcuts. */
+document.addEventListener('keydown', (e)=>{
+  const tag = document.activeElement && document.activeElement.tagName;
+  const inField = tag === 'TEXTAREA' || tag === 'INPUT';
+  if (e.key === 'Escape' && !inField && isServerMode){
+    e.preventDefault();
+    $('btnCancel').click();
+    return;
+  }
+  if (inField) return;
+  if(e.key === 'ArrowLeft'){ $('btnPrev').click(); }
+  else if(e.key === 'ArrowRight'){ $('btnNext').click(); }
+});
+
+/* init */
+renderTop();
+renderDecision();
+</script>
+</body>
+</html>
