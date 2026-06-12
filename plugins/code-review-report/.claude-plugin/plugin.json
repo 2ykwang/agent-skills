@@ -1,0 +1,12 @@
+{
+  "name": "code-review-report",
+  "version": "0.1.0",
+  "description": "Turn code changes into a single-file HTML code review report that pairs the diff with context a diff can't show \u2014 design decisions, rejected alternatives, tradeoffs, unfinished work \u2014 plus prioritized review points. Use when preparing for review after finishing a sizable change, refactor, or feature, or whenever the user asks for a review report, change report, or an HTML summary of their changes.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/code-review-report",
+  "license": "MIT"
+}

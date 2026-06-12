@@ -10,6 +10,9 @@
 | [code-history](skills/code-history) | Trace git history of specific code — find when functions, patterns, or files were added, modified, or removed, and explain the intent behind each change. |
 | | `npx skills add 2ykwang/agent-skills --skill code-history` |
 | | `claude plugin install code-history@2ykwang-agent-skills` |
+| [code-review-report](skills/code-review-report) | Turn code changes into a single-file HTML code review report — the diff plus context a diff can't show: design decisions, tradeoffs, unfinished work, and prioritized review points. |
+| | `npx skills add 2ykwang/agent-skills --skill code-review-report` |
+| | `claude plugin install code-review-report@2ykwang-agent-skills` |
 | [decision-board](skills/decision-board) | Render an interactive HTML board for the user to pick among many comparable options with previews side-by-side. Returns picks as a JSON file the agent can apply directly. |
 | | `npx skills add 2ykwang/agent-skills --skill decision-board` |
 | | `claude plugin install decision-board@2ykwang-agent-skills` |

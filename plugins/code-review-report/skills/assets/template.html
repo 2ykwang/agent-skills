@@ -1,0 +1,135 @@
+<!--
+  code-review-report template. Copy this skeleton and fill in the content.
+  - Section order and contents: references/report-structure.md
+  - Visual rules: references/style-guide.md. The CSS below is the single source of
+    truth for styling — don't restyle it, especially the colors.
+  - Write the report in the user's working language: translate headings and set
+    the <html lang> attribute accordingly. Keep code as-is.
+  - Code blocks: add a language class so highlight.js picks them up
+    (<code class="language-python">).
+  - Footnotes: suspicion markers in change details <sup><a href="#r1">P1</a></sup>
+    pair with review-checklist items (id="r1") and their back-links.
+  - The INLINE_HLJS placeholder is replaced with the vendored highlight.js by
+    scripts/inline_hljs.py. Run it after the content is complete, not before.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[Task] — Review Report</title>
+<script>/* INLINE_HLJS */</script>
+<script>document.addEventListener('DOMContentLoaded', () => hljs.highlightAll());</script>
+<style>
+  :root {
+    --bg: #faf9f6; --text: #1a1a1a; --muted: #6b6b6b;
+    --border: #e5e3dd; --code-bg: #f4f2ec; --accent: #b8512e;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 17px; line-height: 1.7; }
+  .wrap { max-width: 740px; margin: 0 auto; padding: 64px 24px; }
+  h1 { font-size: 32px; font-weight: 600; line-height: 1.25; margin: 0 0 10px; }
+  h2 { font-size: 23px; font-weight: 600; margin: 64px 0 16px; }
+  h3 { font-size: 18px; font-weight: 600; margin: 32px 0 6px; scroll-margin-top: 20px; }
+  p { margin: 0.9em 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .meta { color: var(--muted); font-size: 15px; margin: 0; }
+  .lead { color: var(--muted); font-size: 18px; margin: 0 0 6px; }
+
+  .toc { font-size: 15px; color: var(--muted); border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border); padding: 16px 0; margin: 36px 0; }
+  .toc ol { margin: 0; padding-left: 1.4em; }
+  .toc li { margin: 4px 0; }
+
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.86em; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 14px 16px; overflow-x: auto; font-size: 14px; line-height: 1.6; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .codelabel { font-size: 13px; color: var(--muted); font-weight: 600; margin: 14px 0 4px; }
+  /* quiet syntax highlighting — a few muted token colors, everything else inherits */
+  .hljs-keyword, .hljs-built_in, .hljs-type { color: #8959a8; }
+  .hljs-string, .hljs-attr { color: #5b7a3a; }
+  .hljs-comment { color: #9a9a94; font-style: italic; }
+  .hljs-number, .hljs-literal, .hljs-title, .hljs-title.function_ { color: var(--accent); }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 15px; }
+  th { text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); padding: 9px 12px; }
+  td { text-align: left; border-bottom: 1px solid var(--border); padding: 9px 12px; vertical-align: top; }
+
+  .badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px;
+    border: 1px solid var(--border); border-radius: 4px; color: var(--muted); }
+  .badge-todo { border-color: var(--accent); color: var(--accent); }
+  .quiet { color: var(--muted); font-size: 15px; }
+
+  sup a { font-size: 11px; font-weight: 600; padding: 0 3px; }
+
+  .check { border-top: 1px solid var(--border); padding: 16px 0; scroll-margin-top: 20px; }
+  .check:last-child { border-bottom: 1px solid var(--border); }
+  .check .prio { font-weight: 600; color: var(--accent); margin-right: 8px; }
+  .check .where { color: var(--muted); font-size: 13.5px;
+    font-family: ui-monospace, Menlo, monospace; margin-top: 4px; }
+  .check .back { font-size: 13px; color: var(--muted); }
+  .check .back a { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>[Task] — Review Report</h1>
+  <p class="lead">[One-line summary — what was done]</p>
+  <p class="meta">Scope: [e.g., feat/xxx vs main + working tree] · Written: [date]</p>
+
+  <nav class="toc">
+    <ol>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#decisions">Key design decisions</a></li>
+      <li><a href="#changes">Changes in detail</a></li>
+      <li><a href="#verify">Verification</a></li>
+      <li><a href="#impact">Impact / compatibility</a></li>
+      <li><a href="#todo">Unfinished / next steps</a></li>
+      <li><a href="#review">Review checklist</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="overview">Overview</h2>
+  <p>[What and why. The problem and the intent. Big picture first; name the top P1 findings in one line.]</p>
+
+  <h2 id="decisions">Key design decisions</h2>
+  <h3>[Decision 1]</h3>
+  <p>[What was decided / why / rejected alternatives / tradeoffs]</p>
+
+  <h2 id="changes">Changes in detail</h2>
+  <!-- Give each change-detail heading an id so checklist items can link back to it -->
+  <h3 id="c-1">[File or theme]</h3>
+  <p>[What this change is for. Mark suspicious spots with a footnote<sup><a href="#r1">P1</a></sup>.]</p>
+  <p class="codelabel">Before</p>
+  <pre><code class="language-python">[before]</code></pre>
+  <p class="codelabel">After</p>
+  <pre><code class="language-python">[after]</code></pre>
+
+  <h2 id="verify">Verification</h2>
+  <!-- How the reviewer can reproduce. If nothing was verified, say so. -->
+  <p>[Tests added + manual scenarios. Commands must be copy-pasteable.]</p>
+  <pre><code class="language-bash">[verification command — the project's test/run command]</code></pre>
+
+  <h2 id="impact">Impact / compatibility</h2>
+  <!-- One line if small. UI change: before/after screenshots. "N/A" if none. -->
+  <p>[Other modules touched, external API contracts, migrations, backward compat. "N/A" if none.]</p>
+
+  <h2 id="todo">Unfinished / next steps</h2>
+  <p><span class="badge badge-todo">⚠️ TODO</span> [What's not done]</p>
+
+  <h2 id="review">Review checklist</h2>
+  <div class="check" id="r1">
+    <p><span class="prio">P1</span>[Suspicious spot — why it's suspicious]</p>
+    <p class="where">[file:line]</p>
+    <p class="back"><a href="#c-1">↩ back to change details</a></p>
+  </div>
+
+</div>
+</body>
+</html>
