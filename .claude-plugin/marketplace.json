@@ -22,6 +22,13 @@
       "category": "development"
     },
     {
+      "name": "create-qa-list",
+      "source": "./plugins/create-qa-list",
+      "description": "Turn code, specs, a PR, or the current conversation into a QA test-case list a non-developer can read and run, exported as CSV, a shareable HTML report, or both. Trigger when the user wants QA test cases, a test plan, a QA checklist, or a test-case CSV/HTML (e.g. \"write test cases for this\", \"make a QA list\"). Output uses behavior-and-scenario language, never code symbols like function names or file paths. Not for writing or running automated test code (pytest/jest), code review, or test-strategy docs.",
+      "version": "0.0.1",
+      "category": "productivity"
+    },
+    {
       "name": "decision-board",
       "source": "./plugins/decision-board",
       "description": "Render an interactive HTML board for the user to pick among multiple comparable options side-by-side at once \u2014 engineering trade-offs, copy audits, action-item triage, architecture decisions, policy calls. Returns the picks (and optional hold/note flags) as a JSON file the agent can apply.",

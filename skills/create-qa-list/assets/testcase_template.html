@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<style>
+  :root {
+    --line: #e2e2e6; --ink: #1a1a1c; --muted: #6b6b72; --bg: #fafafa;
+    --p1: #c0392b; --p1bg: #fdecea; --p2: #b9770e; --p2bg: #fef6e7; --p3: #5a6570; --p3bg: #eef0f2;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+         color: var(--ink); background: var(--bg); line-height: 1.55; }
+  header { padding: 28px 32px 18px; border-bottom: 1px solid var(--line); background: #fff; }
+  h1 { margin: 0 0 4px; font-size: 21px; }
+  .subtitle { color: var(--muted); font-size: 14px; }
+  .summary { display: flex; gap: 20px; margin-top: 14px; flex-wrap: wrap; }
+  .summary .stat { font-size: 13px; color: var(--muted); }
+  .summary .stat b { color: var(--ink); font-size: 15px; }
+  .controls { padding: 14px 32px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+              border-bottom: 1px solid var(--line); background: #fff; position: sticky; top: 0; z-index: 5; }
+  #search { flex: 1 1 220px; min-width: 180px; padding: 7px 11px; border: 1px solid var(--line);
+            border-radius: 7px; font-size: 14px; }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px; background: #fff;
+          font-size: 12.5px; cursor: pointer; color: var(--muted); }
+  .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .dl-btn { margin-left: auto; padding: 7px 14px; border: 1px solid var(--ink); border-radius: 7px;
+            background: var(--ink); color: #fff; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  .dl-btn:hover { opacity: .85; }
+  main { padding: 8px 32px 48px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: #fff; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { position: sticky; top: 53px; background: #f4f4f6; font-size: 12px; color: var(--muted);
+       text-transform: uppercase; letter-spacing: .03em; z-index: 4; }
+  tr.cat-row td { background: #f0f1f4; font-weight: 700; font-size: 13px; padding: 8px 12px; }
+  td.tcid { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 6px; font-size: 11.5px; font-weight: 700; }
+  .badge.P1 { color: var(--p1); background: var(--p1bg); }
+  .badge.P2 { color: var(--p2); background: var(--p2bg); }
+  .badge.P3 { color: var(--p3); background: var(--p3bg); }
+  .cell-multiline { white-space: pre-line; }
+  .empty { padding: 40px; text-align: center; color: var(--muted); }
+  @media print { .controls { position: static; } th { position: static; } }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title"></h1>
+  <div class="subtitle" id="subtitle"></div>
+  <div class="summary" id="summary"></div>
+</header>
+<div class="controls">
+  <input id="search" type="search" placeholder="Search scenario, steps, expected result">
+  <div class="filters" id="cat-filters"></div>
+  <div class="filters" id="pri-filters"></div>
+  <button id="csv-btn" class="dl-btn" title="Download all cases as CSV">Download CSV</button>
+</div>
+<main><table><thead id="thead"></thead><tbody id="tbody"></tbody></table>
+  <div class="empty" id="empty" style="display:none">No cases match the filters.</div>
+</main>
+
+<script>
+const DATA = __DATA_JSON__;
+const cols = DATA.columns;
+const cases = DATA.cases;
+const PRIORITY = ["P1", "P2", "P3"];
+const MULTILINE = new Set(["Steps", "Expected Result"]);
+let catFilter = "all", priFilter = "all", q = "";
+
+// Escapes <, >, & via textContent, plus quotes — esc() is reused inside class="..." / data-*="..." attributes.
+function esc(s) { const d = document.createElement("div"); d.textContent = s == null ? "" : String(s); return d.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+
+document.getElementById("title").textContent = DATA.title || "QA Test Cases";
+const sub = document.getElementById("subtitle");
+if (DATA.subtitle) sub.textContent = DATA.subtitle; else sub.style.display = "none";
+
+// summary: total + per-priority counts
+const counts = { P1: 0, P2: 0, P3: 0 };
+cases.forEach(c => { if (counts[c["Priority"]] !== undefined) counts[c["Priority"]]++; });
+document.getElementById("summary").innerHTML =
+  `<span class="stat"><b>${cases.length}</b> cases</span>` +
+  PRIORITY.map(p => `<span class="stat"><b>${counts[p]}</b> ${p}</span>`).join("");
+
+// header row
+document.getElementById("thead").innerHTML = "<tr>" + cols.map(c => `<th>${esc(c)}</th>`).join("") + "</tr>";
+
+// category chips
+const cats = [...new Set(cases.map(c => c["Category"]))];
+document.getElementById("cat-filters").innerHTML =
+  [`<span class="chip active" data-cat="all">All categories</span>`]
+    .concat(cats.map(c => `<span class="chip" data-cat="${esc(c)}">${esc(c)}</span>`)).join("");
+document.getElementById("pri-filters").innerHTML =
+  [`<span class="chip active" data-pri="all">All priorities</span>`]
+    .concat(PRIORITY.map(p => `<span class="chip" data-pri="${p}">${p}</span>`)).join("");
+
+function cellHtml(col, val) {
+  if (col === "Priority") return `<span class="badge ${esc(val)}">${esc(val)}</span>`;
+  const html = esc(val);
+  if (col === "TC_ID") return `<span class="tcid">${html}</span>`;
+  if (MULTILINE.has(col)) return `<div class="cell-multiline">${html}</div>`;
+  return html;
+}
+
+function render() {
+  const rows = cases
+    .filter(c => catFilter === "all" || c["Category"] === catFilter)
+    .filter(c => priFilter === "all" || c["Priority"] === priFilter)
+    .filter(c => !q || cols.some(col => String(c[col] || "").toLowerCase().includes(q)))
+    .sort((a, b) => (a["Category"] || "").localeCompare(b["Category"] || "")
+      || (PRIORITY.indexOf(a["Priority"]) - PRIORITY.indexOf(b["Priority"]))
+      || String(a["TC_ID"]).localeCompare(String(b["TC_ID"])));
+
+  const tbody = document.getElementById("tbody");
+  document.getElementById("empty").style.display = rows.length ? "none" : "block";
+  let html = "", lastCat = null;
+  for (const c of rows) {
+    if (c["Category"] !== lastCat) {
+      html += `<tr class="cat-row"><td colspan="${cols.length}">${esc(c["Category"])}</td></tr>`;
+      lastCat = c["Category"];
+    }
+    html += "<tr>" + cols.map(col => `<td>${cellHtml(col, c[col])}</td>`).join("") + "</tr>";
+  }
+  tbody.innerHTML = html;
+}
+
+document.getElementById("cat-filters").addEventListener("click", e => {
+  if (!e.target.dataset.cat) return;
+  catFilter = e.target.dataset.cat;
+  document.querySelectorAll("#cat-filters .chip").forEach(ch => ch.classList.toggle("active", ch === e.target));
+  render();
+});
+document.getElementById("pri-filters").addEventListener("click", e => {
+  if (!e.target.dataset.pri) return;
+  priFilter = e.target.dataset.pri;
+  document.querySelectorAll("#pri-filters .chip").forEach(ch => ch.classList.toggle("active", ch === e.target));
+  render();
+});
+document.getElementById("search").addEventListener("input", e => { q = e.target.value.toLowerCase(); render(); });
+
+// CSV download — exports all cases (not the filtered view). BOM + CRLF so Excel reads UTF-8.
+function toCsv() {
+  const cell = v => {
+    const s = String(v == null ? "" : v);
+    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const lines = [cols.map(cell).join(",")];
+  for (const c of cases) lines.push(cols.map(col => cell(c[col])).join(","));
+  return "﻿" + lines.join("\r\n");
+}
+document.getElementById("csv-btn").addEventListener("click", () => {
+  // octet-stream: Safari opens text/csv inline (navigates to a blob: URL) instead of
+  // downloading. octet-stream forces a download. download attr keeps the .csv name.
+  const blob = new Blob([toCsv()], { type: "application/octet-stream" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = (DATA.title || "qa_testcases").replace(/\s+/g, "_") + ".csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+render();
+</script>
+</body>
+</html>

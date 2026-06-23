@@ -13,6 +13,9 @@
 | [code-review-report](skills/code-review-report) | Turn code changes into a single-file HTML code review report — the diff plus context a diff can't show: design decisions, tradeoffs, unfinished work, and prioritized review points. |
 | | `npx skills add 2ykwang/agent-skills --skill code-review-report` |
 | | `claude plugin install code-review-report@2ykwang-agent-skills` |
+| [create-qa-list](skills/create-qa-list) | Turn code, specs, or the current conversation into a QA test-case list a non-developer can run — no code symbols, behavior-and-scenario language only. Export as CSV, a shareable HTML report, or both. |
+| | `npx skills add 2ykwang/agent-skills --skill create-qa-list` |
+| | `claude plugin install create-qa-list@2ykwang-agent-skills` |
 | [decision-board](skills/decision-board) | Render an interactive HTML board for the user to pick among many comparable options with previews side-by-side. Returns picks as a JSON file the agent can apply directly. |
 | | `npx skills add 2ykwang/agent-skills --skill decision-board` |
 | | `claude plugin install decision-board@2ykwang-agent-skills` |

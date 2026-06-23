@@ -1,0 +1,9 @@
+TC_ID,Category,Scenario,Preconditions,Steps,Expected Result,Priority
+TC-001,Visibility,Only VIP-grade accounts see the exclusive coupon,VIP-grade account,1. Open the coupon box,The exclusive coupon appears in the list,P1
+TC-002,Visibility,A non-VIP account sees only the basic coupons,General-grade account,1. Open the coupon box,No exclusive coupon; only basic coupons are shown,P2
+TC-003,Input validation,An order can't be saved with a required shipping address left empty,One item in the cart,"1. Open the checkout screen
+2. Try to order with the shipping address empty",The order is blocked and a message appears,P1
+TC-004,Rewards,Re-processing the same order doesn't earn points twice,One order that already earned points,"1. Open the order detail
+2. Re-process the same order",Points are earned only once and don't come in again,P1
+TC-005,State transition,A completed order stays complete after refreshing the list,One order paid to completion,"1. Refresh the order list
+2. Check that order",The order is still shown as complete in the list,P2
