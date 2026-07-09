@@ -50,34 +50,6 @@
       "category": "productivity"
     },
     {
-      "name": "github-create-issue",
-      "source": "./plugins/github-create-issue",
-      "description": "File a GitHub issue maintainers can actually act on \u2014 verified, not a duplicate, follows repo conventions (template/label/prefix), and previewed before publishing. Use when reporting a known problem.",
-      "version": "0.1.0",
-      "category": "productivity"
-    },
-    {
-      "name": "github-review-check-duplicate",
-      "source": "./plugins/github-review-check-duplicate",
-      "description": "Check if a GitHub issue is a duplicate and find related issues and PRs.",
-      "version": "0.1.0",
-      "category": "productivity"
-    },
-    {
-      "name": "github-review-issue",
-      "source": "./plugins/github-review-issue",
-      "description": "Analyze a GitHub issue and provide a structured summary with next-action assessment.",
-      "version": "0.1.0",
-      "category": "productivity"
-    },
-    {
-      "name": "github-review-pr",
-      "source": "./plugins/github-review-pr",
-      "description": "Analyze a GitHub pull request and produce a review report covering changes, review status, and code quality.",
-      "version": "0.1.0",
-      "category": "productivity"
-    },
-    {
       "name": "html-visual",
       "source": "./plugins/html-visual",
       "description": "Generate an interactive single-file HTML visualization (mockup, wireframe, ERD, flowchart, chart, slides, architecture diagram, dashboard, timeline, mindmap, kanban, table).",
