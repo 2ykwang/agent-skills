@@ -1,36 +1,6 @@
 # django-ticket-triage
 
-Analyzes a Django Trac ticket and produces a triage recommendation report — including duplicate search, related PRs, forum discussions, and source code analysis.
-
-## When to use
-
-- Triaging tickets as a Django contributor
-- Quickly assessing a ticket's validity, duplicates, and related discussions
-- Writing a triage report for a new or existing ticket
-
-## Usage
-
-```
-/django-ticket-triage 36812
-```
-
-## What it does
-
-1. **Fetch ticket details** — pulls ticket info, history, and comments from Trac
-2. **Search duplicates** — searches Trac by keywords, error messages, and component
-3. **Find related PRs** — searches GitHub for PRs referencing the ticket
-4. **Check forum discussions** — searches Django Forum for related threads
-5. **Browse source code** — locates the problematic code and checks test coverage
-6. **Assess validity** — evaluates against bug/feature checklists
-7. **Recommend triage stage** — suggests Unreviewed, Accepted, Ready for checkin, etc.
-
-The full report is saved to `triage-reports/<ticket_id>.md`.
-
-## Requirements
-
-- `python3` (standard library only; no extra Python packages required)
-- `gh` CLI (authenticated)
-- Django source checkout (`git clone https://github.com/django/django.git`)
+Analyzes a Django Trac ticket and produces a triage recommendation report — duplicate search, related PRs, forum discussions, and source-code analysis.
 
 ## Installation
 
@@ -46,3 +16,35 @@ claude plugin install django-ticket-triage@2ykwang-agent-skills
 ```bash
 npx skills add 2ykwang/agent-skills --skill django-ticket-triage
 ```
+
+## When to use
+
+- Triaging tickets as a Django contributor
+- Assessing a ticket's validity, duplicates, and related discussions
+- Writing a triage report for a new or existing ticket
+
+## Usage
+
+```
+/django-ticket-triage 36812
+```
+
+## How it works
+
+1. Fetches ticket info, history, and comments from Trac.
+2. Searches Trac for duplicates by keyword, error message, and component.
+3. Finds GitHub PRs referencing the ticket.
+4. Checks the Django Forum for related threads.
+5. Locates the affected source code and checks test coverage.
+6. Assesses validity against bug/feature checklists.
+7. Recommends a triage stage (Unreviewed, Accepted, Ready for checkin, etc.).
+
+## Output
+
+The full report is saved to `triage-reports/<ticket_id>.md`.
+
+## Requirements
+
+- `python3` (standard library only)
+- `gh` CLI (authenticated)
+- Django source checkout (`git clone https://github.com/django/django.git`)

@@ -2,6 +2,21 @@
 
 Writes and maintains code documentation using `[symbol](file-path)` reference pointers instead of inline code blocks, so docs stay resilient to code changes.
 
+## Installation
+
+### Claude Code
+
+```bash
+claude plugin marketplace add 2ykwang/agent-skills
+claude plugin install docs@2ykwang-agent-skills
+```
+
+### npx skills
+
+```bash
+npx skills add 2ykwang/agent-skills --skill docs
+```
+
 ## When to use
 
 - Document the design intent behind a newly implemented feature
@@ -23,25 +38,10 @@ Writes and maintains code documentation using `[symbol](file-path)` reference po
 
 ## How it works
 
-- **write** — Analyzes the relevant code path and generates a document under `docs/generated/<category>/`. Automatically updates `INDEX.md`.
-- **check** — Scans all generated docs for broken code references, outdated content, and orphan documents. Reports findings.
+- **write** — analyzes the relevant code path and generates a document under `docs/generated/<category>/`, updating `INDEX.md`.
+- **check** — scans all generated docs for broken code references, outdated content, and orphan documents, then reports findings.
 
 ## Notes
 
 - Documents are organized by category under `docs/generated/`.
 - Manually written docs outside `docs/generated/` are never modified.
-
-## Installation
-
-### Claude Code
-
-```bash
-claude plugin marketplace add 2ykwang/agent-skills
-claude plugin install docs@2ykwang-agent-skills
-```
-
-### npx skills
-
-```bash
-npx skills add 2ykwang/agent-skills --skill docs
-```
