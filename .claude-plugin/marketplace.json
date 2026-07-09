@@ -71,6 +71,13 @@
       "category": "development"
     },
     {
+      "name": "worth-building",
+      "source": "./plugins/worth-building",
+      "description": "Decide how elaborate to build something (simple vs. robust) and return a concrete, PoC-shaped proposal at that level \u2014 not over- or under-engineered, but right-sized. Use whenever someone is building something and the investment level is unclear: \"quick or proper?\", \"MVP vs. real product\", \"is this over-engineering?\", \"how should I approach X?\", \"quick script vs. robust system\", \"how much architecture?\", \"how much do I build here?\". Fires even without \"poc\" or \"right-size\" \u2014 any time effort and complexity of what to build are being weighed.",
+      "version": "0.1.0",
+      "category": "productivity"
+    },
+    {
       "name": "write-pr",
       "source": "./plugins/write-pr",
       "description": "Analyzes git diff and commit history to write PR title and description based on the project's PR template.",

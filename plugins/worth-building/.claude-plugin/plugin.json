@@ -1,0 +1,12 @@
+{
+  "name": "worth-building",
+  "version": "0.1.0",
+  "description": "Decide how elaborate to build something (simple vs. robust) and return a concrete, PoC-shaped proposal at that level \u2014 not over- or under-engineered, but right-sized. Use whenever someone is building something and the investment level is unclear: \"quick or proper?\", \"MVP vs. real product\", \"is this over-engineering?\", \"how should I approach X?\", \"quick script vs. robust system\", \"how much architecture?\", \"how much do I build here?\". Fires even without \"poc\" or \"right-size\" \u2014 any time effort and complexity of what to build are being weighed.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/worth-building",
+  "license": "MIT"
+}
