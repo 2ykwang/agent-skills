@@ -54,5 +54,7 @@ High-stakes (data migration, public API, customer-facing) → the full path: a c
 
 ## Notes
 
+- Missing context comes back as a short text questionnaire, not an interactive picker — so it works the same outside Claude Code. Two kinds of questions: the domain facts that decide *what* to build, and evidence-of-need questions that decide whether it's worth building at all.
+- Questions don't block. They arrive alongside a tentative proposal with its assumptions stated, so you can correct it instead of answering from scratch.
 - Answers in your language; matches the proposal to how you talk.
 - Push back for the fuller version and it builds that — the default is a default, not a rule.

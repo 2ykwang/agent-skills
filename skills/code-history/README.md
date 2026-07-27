@@ -38,9 +38,19 @@ npx skills add 2ykwang/agent-skills --skill code-history
 
 ## Output
 
-A timeline table — date, author, commit, PR, and change per entry. Each entry states the change type (added / modified / deleted), the intent (feature / bugfix / refactor), and a before/after summary.
+Three parts:
+
+1. **Timeline table** — date, author, commit, PR, and the change per entry. Each entry states the change type (added / modified / refactored / moved / deleted / restored) and its intent (bug fix / feature / refactoring / performance / cleanup / migration).
+2. **Detailed analysis** — for each significant change: a before/after summary, the intent behind it, and what changed in behavior or interface.
+3. **Insights** — the evolution arc, and concrete issues visible in the history: reverted changes, the same area patched repeatedly, commit messages that don't match their diff. Only when the history actually supports them.
+
+## Requirements
+
+- `git`
+- `gh` CLI — optional. Without it, PR links come from commit messages alone.
 
 ## Notes
 
 - Read-only — never modifies code.
-- Links commits to their PRs when the `gh` CLI is available.
+- Above ~30 matching commits, the scope narrows (by file or date) and the truncation is stated in the output.
+- Not a replacement for `git blame` on a single line, or `git show` on one commit — this is for tracing a change across its whole history.

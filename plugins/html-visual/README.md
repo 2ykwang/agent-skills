@@ -39,11 +39,20 @@ npx skills add 2ykwang/agent-skills --skill html-visual
 
 # Omit the type — it's inferred from context
 /html-visual diagram the user signup flow
+
+# Point at an existing output to revise it
+/html-visual erd-orders.html add the refunds table
 ```
 
 ## How it works
 
-1. Determines the visualization type (or infers it from context).
-2. If a file path is given, analyzes the file first (e.g. Prisma schema → ERD).
-3. Generates a single HTML file with dark/light toggle, draggable nodes, and responsive layout.
-4. Opens it in the browser.
+1. Determines the visualization type from the first word, or infers it from the request. If it can't infer, it asks.
+2. Reads the input first when there is one — a file path gets analyzed (Prisma schema → ERD), an existing HTML file gets edited in place rather than regenerated.
+3. Pulls in project context when the request calls for it. Wording like "our", "current", or "the project's" means it reads the actual code, schema, or API before drawing anything.
+4. Generates a single HTML file with dark/light toggle, draggable nodes, and responsive layout.
+5. Validates the result — unclosed tags, smart quotes in attributes, overlapping elements — and fixes what it finds.
+6. Tells you the command to open it.
+
+## Output
+
+One self-contained HTML file in the project root, named `<type>-<subject>.html` — `mockup-login-form.html`, `erd-orders.html`, `flow-payment.html`. When the type had to be inferred, the prefix is `visual-`. Everything is inline; libraries come from a CDN, so charts and slides need a network connection on first open.

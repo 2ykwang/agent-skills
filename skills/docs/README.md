@@ -38,10 +38,25 @@ npx skills add 2ykwang/agent-skills --skill docs
 
 ## How it works
 
-- **write** — analyzes the relevant code path and generates a document under `docs/generated/<category>/`, updating `INDEX.md`.
-- **check** — scans all generated docs for broken code references, outdated content, and orphan documents, then reports findings.
+**write** — checks for an existing doc on the same topic first (and offers to update it instead of duplicating), reads the code path you gave it or the current conversation for context, picks a category from the folders already there — proposing a new one if nothing fits — writes `docs/generated/<category>/<slug>.md`, and updates `INDEX.md`.
+
+**check** — reads every generated doc's frontmatter and reports four things:
+
+| Check | What it flags |
+|---|---|
+| Stale | `updated` older than 90 days |
+| Broken code refs | a path in `code_refs` that no longer exists in the project |
+| Broken doc links | a slug in `related` with no matching document |
+| Orphans | a document not linked from `INDEX.md` |
+
+## Output
+
+Documents carry frontmatter — `title`, `category`, `created`, `updated`, `code_refs`, `related` — so `check` can verify them later. The body records design intent, with `[symbol](file-path)` links pointing at the code instead of pasted snippets.
+
+`/docs` with no subcommand prints the usage summary and stops.
 
 ## Notes
 
+- On first run it asks before creating `docs/generated/` and its `INDEX.md`.
 - Documents are organized by category under `docs/generated/`.
 - Manually written docs outside `docs/generated/` are never modified.

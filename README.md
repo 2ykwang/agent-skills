@@ -19,7 +19,7 @@
 | [decision-board](skills/decision-board) | Render an interactive HTML board for the user to pick among many comparable options with previews side-by-side. Returns picks as a JSON file the agent can apply directly. |
 | | `npx skills add 2ykwang/agent-skills --skill decision-board` |
 | | `claude plugin install decision-board@2ykwang-agent-skills` |
-| [docs](skills/docs) | Code documentation agent — write/update docs with /docs write, check status with /docs check. Minimal code blocks, reference pointer based. |
+| [docs](skills/docs) | Write and maintain project documentation — `/docs write` creates or updates a doc, `/docs check` reports stale content, broken code references, and orphan files. |
 | | `npx skills add 2ykwang/agent-skills --skill docs` |
 | | `claude plugin install docs@2ykwang-agent-skills` |
 | [django-ticket-triage](skills/django-ticket-triage) | Analyze a Django Trac ticket and produce a triage recommendation report. |

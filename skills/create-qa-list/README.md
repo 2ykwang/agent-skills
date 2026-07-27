@@ -40,11 +40,15 @@ Works step by step — confirms scope, categories, and a case outline with you b
 1. **Scope** — identifies the target feature; confirms what's in, what's out, and which platform/role.
 2. **Categories & priority** — agrees how cases are grouped and graded (P1–P3).
 3. **Outline** — shares one-line case titles first, so gaps are cheap to catch.
-4. **Export** — CSV, HTML, or both.
+4. **Export format** — CSV, HTML, or both.
+5. **Build & verify** — expands the approved outline into full rows, renders them with the bundled script, then re-reads the output: every expected result traced back to real behavior, no code symbol leaked into a cell, columns identical across rows, priorities matching the agreed rubric.
 
 ## Output
 
-Test cases written in behavior-and-scenario language — what the user does and what they see, with no code symbols. CSV for import, or an HTML report with a built-in "Download CSV" button.
+Seven columns by default — `TC_ID`, `Category`, `Scenario`, `Preconditions`, `Steps`, `Expected Result`, `Priority` — written in behavior-and-scenario language: what the user does and what they see, with no code symbols. Files land in the output directory you pick (`qa_output/` by default).
+
+- **CSV** — for import into a test-management tool or spreadsheet.
+- **HTML** — a readable, shareable report with a built-in "Download CSV" button.
 
 ## Requirements
 

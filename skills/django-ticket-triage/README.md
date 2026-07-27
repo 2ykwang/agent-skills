@@ -41,10 +41,10 @@ npx skills add 2ykwang/agent-skills --skill django-ticket-triage
 
 ## Output
 
-The full report is saved to `triage-reports/<ticket_id>.md`.
+The full report is saved to `triage-reports/<ticket_id>.md`, and a short summary is printed in the terminal. The report covers the ticket's basic info, duplicate candidates, related PRs and forum threads, the validity assessment, and the recommended triage stage with its reasoning.
 
 ## Requirements
 
 - `python3` (standard library only)
-- `gh` CLI (authenticated)
-- Django source checkout (`git clone https://github.com/django/django.git`)
+- `gh` CLI, authenticated (`gh auth login`) — required. The skill stops if it's missing.
+- Django source checkout (`git clone https://github.com/django/django.git`) — optional. Without it, the source-code and test-coverage step is skipped and the rest still runs.

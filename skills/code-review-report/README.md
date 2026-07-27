@@ -35,12 +35,14 @@ Best run in the conversation where the change was made — that's where the "why
 
 1. Collects the change — committed diff, uncommitted work, and untracked files.
 2. Gathers the context a diff never records — decisions, rejected alternatives, tradeoffs, unfinished work.
-3. Extracts prioritized (P1–P3) review points.
+3. Extracts prioritized (P1–P3) review points. Subagents review the code with that context attached, one per perspective (correctness, security, migration compatibility, and so on), in parallel for large changes.
 4. Writes a self-contained HTML report and opens it.
 
 ## Output
 
-A single HTML file (`<task>-review-report.html`) in the project root: syntax-highlighted diff, the context behind each change, and a P1–P3 review checklist with links between each change and its review points. Self-contained and offline-friendly.
+A single HTML file (`<task>-review-report.html`) in the project root: syntax-highlighted diff, the context behind each change, and a P1–P3 review checklist with links between each change and its review points. Self-contained and offline-friendly — highlight.js is inlined, so it needs no network.
+
+The report is written in the language you're working in; only the code stays as-is.
 
 ## Requirements
 
