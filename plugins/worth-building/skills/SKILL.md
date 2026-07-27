@@ -1,6 +1,6 @@
 ---
 name: worth-building
-version: 0.1.0
+version: 0.1.1
 category: productivity
 description: 'Decide how elaborate to build something (simple vs. robust) and return a concrete, PoC-shaped proposal at that level — not over- or under-engineered, but right-sized. Use whenever someone is building something and the investment level is unclear: "quick or proper?", "MVP vs. real product", "is this over-engineering?", "how should I approach X?", "quick script vs. robust system", "how much architecture?", "how much do I build here?". Fires even without "poc" or "right-size" — any time effort and complexity of what to build are being weighed.'
 argument-hint: "<what you're building or the decision to size>"

@@ -1,7 +1,7 @@
 {
   "name": "write-pr",
-  "version": "0.0.3",
-  "description": "Analyzes git diff and commit history to write PR title and description based on the project's PR template.",
+  "version": "0.0.4",
+  "description": "Draft a pull request title and body from the current branch's diff and commit history, following the project's PR template and title conventions. Use when the user is about to open a PR and wants ready-to-paste content, or asks to write, draft, or fill in a PR description. Read-only \u2014 never opens or pushes the PR.",
   "author": {
     "name": "2ykwang",
     "url": "https://github.com/2ykwang"

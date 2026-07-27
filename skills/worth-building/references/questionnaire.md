@@ -1,6 +1,6 @@
 # Questionnaire format
 
-Throw pivot-targeted questions as a text questionnaire. Don't use a tool like AskUserQuestion — for portability. Outside Claude Code (other agents, plain chat) those tools aren't available. A text questionnaire works everywhere, and fixing the format keeps it readable and consistent.
+Ask pivot-targeted questions as a text questionnaire. Don't use a tool like AskUserQuestion — for portability. Outside Claude Code (other agents, plain chat) those tools aren't available. A text questionnaire works everywhere, and fixing the format keeps it readable and consistent.
 
 ## Two question classes — don't mix them, check both
 

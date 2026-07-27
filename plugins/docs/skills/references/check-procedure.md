@@ -70,7 +70,7 @@ Omit sections with 0 items.
 
 If issues are found or there are unindexed documents:
 
-1. Ask user: "Update INDEX.md?"
+1. Ask the user: "Update INDEX.md?"
 2. On approval:
    - Regenerate INDEX.md based on all document frontmatter
    - Group by category (based on directory structure)

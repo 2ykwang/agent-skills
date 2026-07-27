@@ -1,8 +1,8 @@
 ---
 name: quick-pr
-version: 0.0.2
+version: 0.0.3
 category: productivity
-description: "Split a minor change from the current work into a separate worktree and open a PR without interrupting your flow. Requires Claude Code (uses EnterWorktree, ExitWorktree, AskUserQuestion)."
+description: "Split a minor change from the current work into a separate worktree and open a PR without interrupting your flow. Use when an unrelated small fix (typo, lint rule, config tweak) is sitting in a feature branch and the user wants it shipped on its own — \"quick PR\", \"split this out\", \"ship this separately\". Requires Claude Code (uses EnterWorktree, ExitWorktree, AskUserQuestion)."
 argument-hint: "[file-path or change description]"
 ---
 

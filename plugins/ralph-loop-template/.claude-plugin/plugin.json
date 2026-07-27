@@ -1,7 +1,7 @@
 {
   "name": "ralph-loop-template",
-  "version": "0.0.2",
-  "description": "Generates iterable checklist PROMPT files for Ralph Loop from plan files or current context, and provides the /ralph-loop execution command.",
+  "version": "0.0.3",
+  "description": "Generate an iterable checklist PROMPT file for Ralph Loop from a plan file or the current conversation, and output the ready-to-run /ralph-loop command.",
   "author": {
     "name": "2ykwang",
     "url": "https://github.com/2ykwang"

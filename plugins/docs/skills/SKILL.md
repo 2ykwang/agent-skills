@@ -1,10 +1,12 @@
 ---
 name: docs
-version: 0.0.2
+version: 0.0.3
 category: productivity
-description: "Code documentation agent — write/update docs with /docs write, check status with /docs check. Minimal code blocks, reference pointer based."
+description: "Write and maintain project documentation under docs/generated/ — /docs write creates or updates a doc on a topic, /docs check reports stale content, broken code references, and orphan files. Use when the user wants to capture the design intent behind a feature, record an architectural decision, or verify existing docs still match the code. Docs use [symbol](file-path) reference pointers instead of inline code blocks."
 argument-hint: "<write|check> [topic] [code-path]"
 ---
+
+# Docs
 
 ## Input
 
@@ -23,7 +25,7 @@ Documents outside `docs/generated/` are considered manually written and must nev
 
 ### Tool Usage Rules
 
-Always use the tools below for document search and management. Do not open files one by one — search smartly using patterns.
+Always use the tools below for document search and management. Do not open files one by one — search with patterns.
 
 | Purpose | Tool | Usage |
 |---------|------|-------|
@@ -50,7 +52,7 @@ The first word of `$ARGUMENTS` determines the subcommand.
 ```
 ## docs
 
-Code documentation agent — systematically records development knowledge.
+Writes and maintains project documentation under `docs/generated/`.
 
 ### Commands
 

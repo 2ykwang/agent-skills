@@ -10,78 +10,78 @@
     {
       "name": "code-history",
       "source": "./plugins/code-history",
-      "description": "Trace git history of specific code \u2014 find when functions, patterns, or files were added, modified, or removed, and explain the intent behind each change.",
-      "version": "0.0.1",
+      "description": "Trace the git history of specific code \u2014 when a function, pattern, or file was added, modified, or removed, and the intent behind each change. Use when the user asks when or why a piece of code changed, wants the evolution of a function, or needs the commit or PR that introduced a behavior. Read-only; not for plain git log or a single line's last author.",
+      "version": "0.0.2",
       "category": "development"
     },
     {
       "name": "code-review-report",
       "source": "./plugins/code-review-report",
       "description": "Turn code changes into a single-file HTML code review report that pairs the diff with context a diff can't show \u2014 design decisions, rejected alternatives, tradeoffs, unfinished work \u2014 plus prioritized review points. Use when preparing for review after finishing a sizable change, refactor, or feature, or whenever the user asks for a review report, change report, or an HTML summary of their changes.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "category": "development"
     },
     {
       "name": "create-qa-list",
       "source": "./plugins/create-qa-list",
       "description": "Turn code, specs, a PR, or the current conversation into a QA test-case list a non-developer can read and run, exported as CSV, a shareable HTML report, or both. Trigger when the user wants QA test cases, a test plan, a QA checklist, or a test-case CSV/HTML (e.g. \"write test cases for this\", \"make a QA list\"). Output uses behavior-and-scenario language, never code symbols like function names or file paths. Not for writing or running automated test code (pytest/jest), code review, or test-strategy docs.",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "category": "productivity"
     },
     {
       "name": "decision-board",
       "source": "./plugins/decision-board",
       "description": "Render an interactive HTML board for the user to pick among multiple comparable options side-by-side at once \u2014 engineering trade-offs, copy audits, action-item triage, architecture decisions, policy calls. Returns the picks (and optional hold/note flags) as a JSON file the agent can apply.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "category": "productivity"
     },
     {
       "name": "django-ticket-triage",
       "source": "./plugins/django-ticket-triage",
-      "description": "Analyze a Django Trac ticket and produce a triage recommendation report.",
-      "version": "0.2.0",
+      "description": "Analyze a Django Trac ticket and produce a triage recommendation report \u2014 duplicate search, related PRs, forum threads, and the affected source code. Use when the user gives a Django ticket number, or asks whether a ticket is valid, a duplicate, or ready for a triage stage.",
+      "version": "0.2.1",
       "category": "integrations"
     },
     {
       "name": "docs",
       "source": "./plugins/docs",
-      "description": "Code documentation agent \u2014 write/update docs with /docs write, check status with /docs check. Minimal code blocks, reference pointer based.",
-      "version": "0.0.2",
+      "description": "Write and maintain project documentation under docs/generated/ \u2014 /docs write creates or updates a doc on a topic, /docs check reports stale content, broken code references, and orphan files. Use when the user wants to capture the design intent behind a feature, record an architectural decision, or verify existing docs still match the code. Docs use [symbol](file-path) reference pointers instead of inline code blocks.",
+      "version": "0.0.3",
       "category": "productivity"
     },
     {
       "name": "html-visual",
       "source": "./plugins/html-visual",
-      "description": "Generate an interactive single-file HTML visualization (mockup, wireframe, ERD, flowchart, chart, slides, architecture diagram, dashboard, timeline, mindmap, kanban, table).",
-      "version": "0.0.1",
+      "description": "Generate an interactive single-file HTML visualization \u2014 mockup, wireframe, ERD, flowchart, chart, slides, architecture diagram, dashboard, timeline, mindmap, kanban, or table. Use when the user wants something rendered rather than described: a UI mockup or wireframe, a database schema as an ERD, business logic as a flowchart, data as a chart, or content as slides. Also use when they point at a file (schema, spec, data) and ask to see it visualized.",
+      "version": "0.0.2",
       "category": "design-frontend"
     },
     {
       "name": "quick-pr",
       "source": "./plugins/quick-pr",
-      "description": "Split a minor change from the current work into a separate worktree and open a PR without interrupting your flow. Requires Claude Code (uses EnterWorktree, ExitWorktree, AskUserQuestion).",
-      "version": "0.0.2",
+      "description": "Split a minor change from the current work into a separate worktree and open a PR without interrupting your flow. Use when an unrelated small fix (typo, lint rule, config tweak) is sitting in a feature branch and the user wants it shipped on its own \u2014 \\\"quick PR\\\", \\\"split this out\\\", \\\"ship this separately\\\". Requires Claude Code (uses EnterWorktree, ExitWorktree, AskUserQuestion).",
+      "version": "0.0.3",
       "category": "productivity"
     },
     {
       "name": "ralph-loop-template",
       "source": "./plugins/ralph-loop-template",
-      "description": "Generates iterable checklist PROMPT files for Ralph Loop from plan files or current context, and provides the /ralph-loop execution command.",
-      "version": "0.0.2",
+      "description": "Generate an iterable checklist PROMPT file for Ralph Loop from a plan file or the current conversation, and output the ready-to-run /ralph-loop command.",
+      "version": "0.0.3",
       "category": "development"
     },
     {
       "name": "worth-building",
       "source": "./plugins/worth-building",
       "description": "Decide how elaborate to build something (simple vs. robust) and return a concrete, PoC-shaped proposal at that level \u2014 not over- or under-engineered, but right-sized. Use whenever someone is building something and the investment level is unclear: \"quick or proper?\", \"MVP vs. real product\", \"is this over-engineering?\", \"how should I approach X?\", \"quick script vs. robust system\", \"how much architecture?\", \"how much do I build here?\". Fires even without \"poc\" or \"right-size\" \u2014 any time effort and complexity of what to build are being weighed.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "category": "productivity"
     },
     {
       "name": "write-pr",
       "source": "./plugins/write-pr",
-      "description": "Analyzes git diff and commit history to write PR title and description based on the project's PR template.",
-      "version": "0.0.3",
+      "description": "Draft a pull request title and body from the current branch's diff and commit history, following the project's PR template and title conventions. Use when the user is about to open a PR and wants ready-to-paste content, or asks to write, draft, or fill in a PR description. Read-only \u2014 never opens or pushes the PR.",
+      "version": "0.0.4",
       "category": "productivity"
     }
   ]

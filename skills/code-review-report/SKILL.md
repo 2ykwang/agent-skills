@@ -1,6 +1,6 @@
 ---
 name: code-review-report
-version: 0.1.0
+version: 0.1.1
 category: development
 description: Turn code changes into a single-file HTML code review report that pairs the diff with context a diff can't show — design decisions, rejected alternatives, tradeoffs, unfinished work — plus prioritized review points. Use when preparing for review after finishing a sizable change, refactor, or feature, or whenever the user asks for a review report, change report, or an HTML summary of their changes.
 ---
@@ -31,7 +31,7 @@ If the conversation lacks this (e.g., the skill was invoked fresh), reconstruct 
 
 ## 3. Extract review points
 
-Inject the changed code plus the working context into subagents and collect suspicious spots as P1–P3 findings. Read `references/review-perspectives.md` for the perspective list and the subagent prompt skeleton. The context injection is the point — without it you only get surface-level remarks, not findings like spec mismatches or contradictions between decisions. For large changes, run one subagent per perspective in parallel.
+Hand the changed code and the working context to subagents, and collect what they flag as P1–P3 findings. Read `references/review-perspectives.md` for the perspective list and the subagent prompt skeleton. The context injection is the point — without it you only get surface-level remarks, not findings like spec mismatches or contradictions between decisions. For large changes, run one subagent per perspective in parallel.
 
 ## 4. Write the HTML
 

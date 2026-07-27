@@ -1,7 +1,7 @@
 {
   "name": "code-history",
-  "version": "0.0.1",
-  "description": "Trace git history of specific code \u2014 find when functions, patterns, or files were added, modified, or removed, and explain the intent behind each change.",
+  "version": "0.0.2",
+  "description": "Trace the git history of specific code \u2014 when a function, pattern, or file was added, modified, or removed, and the intent behind each change. Use when the user asks when or why a piece of code changed, wants the evolution of a function, or needs the commit or PR that introduced a behavior. Read-only; not for plain git log or a single line's last author.",
   "author": {
     "name": "2ykwang",
     "url": "https://github.com/2ykwang"

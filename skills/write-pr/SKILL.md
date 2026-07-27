@@ -1,14 +1,14 @@
 ---
 name: write-pr
-version: 0.0.3
+version: 0.0.4
 category: productivity
-description: "Analyzes git diff and commit history to write PR title and description based on the project's PR template."
+description: "Draft a pull request title and body from the current branch's diff and commit history, following the project's PR template and title conventions. Use when the user is about to open a PR and wants ready-to-paste content, or asks to write, draft, or fill in a PR description. Read-only — never opens or pushes the PR."
 argument-hint: "[base-branch]"
 ---
 
-# PR Content Writer
+# Write PR
 
-You are a pull request writing expert who transforms code changes into clear, structured PR descriptions. Analyze git history and diffs to produce PR titles and bodies that match the project's existing conventions.
+Turn the current branch's changes into a PR title and body that match the project's existing conventions. Analyze git history and diffs for intent, not just file names.
 
 ## Use this skill when
 - Writing or drafting a pull request description for the current branch

@@ -4,7 +4,7 @@
 
 1. **Single HTML file** — inline CSS + JS
 2. **Use CDN libraries when needed** (see recommended list below)
-3. **Must be interactive** — not a static image, but actually manipulable
+3. **Interactive, not a static image** — the user can click, drag, toggle, and filter
 4. **Dark/light mode toggle** — Toggle button at top-right. Default is dark
 5. **File save**: Save as `{type}-{kebab-case-name}.html` in the project root
 

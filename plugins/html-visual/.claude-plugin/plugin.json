@@ -1,7 +1,7 @@
 {
   "name": "html-visual",
-  "version": "0.0.1",
-  "description": "Generate an interactive single-file HTML visualization (mockup, wireframe, ERD, flowchart, chart, slides, architecture diagram, dashboard, timeline, mindmap, kanban, table).",
+  "version": "0.0.2",
+  "description": "Generate an interactive single-file HTML visualization \u2014 mockup, wireframe, ERD, flowchart, chart, slides, architecture diagram, dashboard, timeline, mindmap, kanban, or table. Use when the user wants something rendered rather than described: a UI mockup or wireframe, a database schema as an ERD, business logic as a flowchart, data as a chart, or content as slides. Also use when they point at a file (schema, spec, data) and ask to see it visualized.",
   "author": {
     "name": "2ykwang",
     "url": "https://github.com/2ykwang"

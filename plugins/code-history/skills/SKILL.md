@@ -1,14 +1,14 @@
 ---
 name: code-history
-version: 0.0.1
+version: 0.0.2
 category: development
-description: "Trace git history of specific code — find when functions, patterns, or files were added, modified, or removed, and explain the intent behind each change."
+description: "Trace the git history of specific code — when a function, pattern, or file was added, modified, or removed, and the intent behind each change. Use when the user asks when or why a piece of code changed, wants the evolution of a function, or needs the commit or PR that introduced a behavior. Read-only; not for plain git log or a single line's last author."
 argument-hint: "<pattern | function-name | file-path>"
 ---
 
-# Code History Tracer
+# Code History
 
-You are a git history analysis expert. Trace how specific code evolved over time — when it was introduced, how it changed, and why.
+Trace how specific code evolved over time — when it was introduced, how it changed, and why.
 
 ## Use this skill when
 

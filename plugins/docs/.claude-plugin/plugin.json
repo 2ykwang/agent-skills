@@ -1,7 +1,7 @@
 {
   "name": "docs",
-  "version": "0.0.2",
-  "description": "Code documentation agent \u2014 write/update docs with /docs write, check status with /docs check. Minimal code blocks, reference pointer based.",
+  "version": "0.0.3",
+  "description": "Write and maintain project documentation under docs/generated/ \u2014 /docs write creates or updates a doc on a topic, /docs check reports stale content, broken code references, and orphan files. Use when the user wants to capture the design intent behind a feature, record an architectural decision, or verify existing docs still match the code. Docs use [symbol](file-path) reference pointers instead of inline code blocks.",
   "author": {
     "name": "2ykwang",
     "url": "https://github.com/2ykwang"

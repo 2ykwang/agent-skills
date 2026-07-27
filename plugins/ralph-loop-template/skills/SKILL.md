@@ -1,12 +1,14 @@
 ---
 name: ralph-loop-template
-version: 0.0.2
+version: 0.0.3
 category: development
-description: Generates iterable checklist PROMPT files for Ralph Loop from plan files or current context, and provides the /ralph-loop execution command.
+description: Generate an iterable checklist PROMPT file for Ralph Loop from a plan file or the current conversation, and output the ready-to-run /ralph-loop command.
 requires: "[ralph-wiggum](https://github.com/anthropics/claude-code/tree/main/plugins/ralph-wiggum)"
 disable-model-invocation: true
 argument-hint: "[plan file path]"
 ---
+
+# Ralph Loop Template
 
 ## Input
 
@@ -69,7 +71,7 @@ Split the plan into phases suitable for Ralph Loop iterations.
 
 **Splitting principles**:
 
-- **One iteration = exactly one phase**. Processing 2+ phases is strictly forbidden.
+- **One iteration = exactly one phase.** Two phases in one iteration means a verification failure can't be traced to the phase that caused it, and the next iteration resumes from an unclear state.
 - When a phase is completed, immediately end the iteration. The next phase is handled in the next iteration.
 - Each phase must be the **minimum unit that can independently pass verification**.
 - Split phases that are too large, merge phases that are too small.

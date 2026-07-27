@@ -1,6 +1,6 @@
 # GitHub CLI Examples for Django
 
-Use the `gh` CLI for all GitHub-related information. **DO NOT use WebFetch for GitHub URLs.**
+Use the `gh` CLI for all GitHub lookups, not WebFetch — `gh` returns structured JSON from the authenticated API, while a github.com URL returns HTML that has to be scraped.
 
 ## Search PRs
 

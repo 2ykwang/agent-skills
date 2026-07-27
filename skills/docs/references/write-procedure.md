@@ -4,7 +4,7 @@
 
 1. **Glob** to check if `docs/generated/` directory exists (`docs/generated/**` pattern)
 2. If it does not exist:
-   - Ask user: "`docs/generated/` directory does not exist. Create it?"
+   - Ask the user: "`docs/generated/` directory does not exist. Create it?"
    - On approval, create `docs/generated/` directory
    - Create empty INDEX.md:
      ```markdown

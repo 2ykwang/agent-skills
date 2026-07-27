@@ -1,12 +1,14 @@
 ---
 name: django-ticket-triage
-version: 0.2.0
+version: 0.2.1
 category: integrations
-description: "Analyze a Django Trac ticket and produce a triage recommendation report."
+description: "Analyze a Django Trac ticket and produce a triage recommendation report — duplicate search, related PRs, forum threads, and the affected source code. Use when the user gives a Django ticket number, or asks whether a ticket is valid, a duplicate, or ready for a triage stage."
 argument-hint: "<ticket_id>"
 ---
 
-Analyze Django ticket and provide triage recommendations.
+# Django Ticket Triage
+
+Analyze a Django Trac ticket and recommend a triage stage.
 
 **Prerequisites**:
 - `python3` (standard library only; no extra Python packages required)
@@ -19,8 +21,8 @@ If `django/` directory is missing, warn the user and skip Step 5 (source code br
 **Arguments**:
 - `$ARGUMENTS`: Trac ticket number (required, e.g., `36812`, `2750`)
 
-**IMPORTANT**:
-- DO NOT use WebFetch or Fetch for GitHub URLs. ALWAYS use the `gh` CLI command instead.
+**GitHub access**: use the `gh` CLI for every GitHub lookup, not WebFetch. `gh` goes through the authenticated API and returns structured JSON; fetching a github.com URL returns rendered HTML that has to be scraped and breaks whenever the page layout changes.
+
 - For commits: `gh api repos/<owner>/django/commits/<sha>`
 - For PRs: `gh pr view <number> --repo django/django` or `gh api repos/django/django/pulls/<number>`
 - See `references/gh-examples.md` for more examples.

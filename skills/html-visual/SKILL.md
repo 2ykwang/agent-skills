@@ -1,10 +1,12 @@
 ---
 name: html-visual
-version: 0.0.1
+version: 0.0.2
 category: design-frontend
-description: "Generate an interactive single-file HTML visualization (mockup, wireframe, ERD, flowchart, chart, slides, architecture diagram, dashboard, timeline, mindmap, kanban, table)."
+description: "Generate an interactive single-file HTML visualization — mockup, wireframe, ERD, flowchart, chart, slides, architecture diagram, dashboard, timeline, mindmap, kanban, or table. Use when the user wants something rendered rather than described: a UI mockup or wireframe, a database schema as an ERD, business logic as a flowchart, data as a chart, or content as slides. Also use when they point at a file (schema, spec, data) and ask to see it visualized."
 argument-hint: "[type] <content>"
 ---
+
+# HTML Visualization
 
 ## Input
 
@@ -19,7 +21,7 @@ First, read `references/common-rules.md` to review common rules.
 
 ### Type Determination
 
-Determine the type from the first argument (`$0`).
+Determine the type from the first word of `$ARGUMENTS`.
 
 | Argument | Type | Filename Pattern |
 |----------|------|-----------------|

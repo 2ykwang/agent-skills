@@ -1,6 +1,6 @@
 ---
 name: decision-board
-version: 0.1.0
+version: 0.1.1
 category: productivity
 description: Render an interactive HTML board for the user to pick among multiple comparable options side-by-side at once — engineering trade-offs, copy audits, action-item triage, architecture decisions, policy calls. Returns the picks (and optional hold/note flags) as a JSON file the agent can apply.
 ---
