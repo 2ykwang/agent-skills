@@ -1,3 +1,5 @@
+**English** | [한국어](README.ko.md)
+
 # docs
 
 Writes and maintains code documentation using `[symbol](file-path)` reference pointers instead of inline code blocks, so docs stay resilient to code changes.

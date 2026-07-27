@@ -1,3 +1,5 @@
+**English** | [한국어](README.ko.md)
+
 ## Installation
 
 - **Skills CLI**: `npx skills add 2ykwang/agent-skills`

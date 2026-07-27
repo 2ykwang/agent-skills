@@ -1,3 +1,5 @@
+**English** | [한국어](README.ko.md)
+
 # worth-building
 
 Decide how elaborate to build something — simple vs. robust — and get back a concrete, PoC-shaped proposal at that level. Not over-engineered, not under-built: right-sized. The output is a proposal you can start from ("build it in this shape, this was left out, raise it when you see this signal"), not a grade.

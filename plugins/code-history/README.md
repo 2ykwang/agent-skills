@@ -1,3 +1,5 @@
+**English** | [한국어](README.ko.md)
+
 # code-history
 
 Traces the git history of specific code and explains the intent behind each change — when it was added, modified, or removed, and why.

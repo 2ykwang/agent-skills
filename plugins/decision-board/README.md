@@ -1,3 +1,5 @@
+**English** | [한국어](README.ko.md)
+
 # decision-board
 
 Puts several comparable one-of-N choices on a single HTML board with previews side by side, so you pick them all in one sitting instead of scrolling a chat thread. Returns your picks as JSON the agent applies.

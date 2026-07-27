@@ -1,3 +1,5 @@
+**English** | [한국어](README.ko.md)
+
 # html-visual
 
 Generates interactive single-file HTML visualizations — UI mockups, ERDs, flowcharts, data charts, presentations, and more.

@@ -1,3 +1,5 @@
+**English** | [한국어](README.ko.md)
+
 # code-review-report
 
 Turns your changes into a single-file HTML report that pairs the diff with the context a diff can't show — why each change was made, rejected alternatives, tradeoffs, unfinished work — plus prioritized review points.

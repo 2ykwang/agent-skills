@@ -1,3 +1,5 @@
+**English** | [한국어](README.ko.md)
+
 # quick-pr
 
 Splits a minor change from your current work into a separate worktree and opens a PR — without leaving your branch, and without the stash/checkout/branch/push ceremony.

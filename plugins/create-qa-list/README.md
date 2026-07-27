@@ -1,3 +1,5 @@
+**English** | [한국어](README.ko.md)
+
 # create-qa-list
 
 Turns code, a spec, a PR, or the current conversation into a QA test-case list a non-developer can read and run — exported as CSV, an HTML report, or both.

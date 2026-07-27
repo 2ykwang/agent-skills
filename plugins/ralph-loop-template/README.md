@@ -1,3 +1,5 @@
+**English** | [한국어](README.ko.md)
+
 # ralph-loop-template
 
 Generates an iterable checklist PROMPT file for [Ralph Loop](https://github.com/anthropics/claude-code/tree/main/plugins/ralph-wiggum) from a plan file or the current conversation.

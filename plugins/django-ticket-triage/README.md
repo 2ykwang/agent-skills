@@ -1,3 +1,5 @@
+**English** | [한국어](README.ko.md)
+
 # django-ticket-triage
 
 Analyzes a Django Trac ticket and produces a triage recommendation report — duplicate search, related PRs, forum discussions, and source-code analysis.
