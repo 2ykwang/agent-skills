@@ -1,0 +1,12 @@
+{
+  "name": "commit-fixup",
+  "version": "0.0.1",
+  "description": "Absorb uncommitted working tree edits into the existing commits on the current branch where each change belongs (fixup commits + autosquash rebase). Use on requests like 'fold this into the original commit', 'clean up the commit history', 'squash the review fixes into their commits', 'fixup', 'amend into an existing commit', or when review feedback and polishing edits need to land in the right commit. Not for reordering commits already in history, and not for splitting a commit apart.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/commit-fixup",
+  "license": "MIT"
+}

@@ -22,6 +22,20 @@
       "category": "development"
     },
     {
+      "name": "commit-fixup",
+      "source": "./plugins/commit-fixup",
+      "description": "Absorb uncommitted working tree edits into the existing commits on the current branch where each change belongs (fixup commits + autosquash rebase). Use on requests like 'fold this into the original commit', 'clean up the commit history', 'squash the review fixes into their commits', 'fixup', 'amend into an existing commit', or when review feedback and polishing edits need to land in the right commit. Not for reordering commits already in history, and not for splitting a commit apart.",
+      "version": "0.0.1",
+      "category": "development"
+    },
+    {
+      "name": "commit-split",
+      "source": "./plugins/commit-split",
+      "description": "Split a pile of uncommitted changes into several context-scoped commits. Analyzes the diff first, proposes logical groups and a commit count, and once the user confirms the granularity, stages per file \u2014 down to hunks inside a single file when needed \u2014 and commits with messages matching the repo's convention. Use on requests like 'split this into commits', 'commit by context', 'atomic commits', 'how should I split these changes', or when uncommitted work mixes several topics (feature + bugfix + config). Not for rewriting already-committed history (rebase, fixup, squash), and not for a single-topic change one commit covers.",
+      "version": "0.0.1",
+      "category": "development"
+    },
+    {
       "name": "create-qa-list",
       "source": "./plugins/create-qa-list",
       "description": "Turn code, specs, a PR, or the current conversation into a QA test-case list a non-developer can read and run, exported as CSV, a shareable HTML report, or both. Trigger when the user wants QA test cases, a test plan, a QA checklist, or a test-case CSV/HTML (e.g. \"write test cases for this\", \"make a QA list\"). Output uses behavior-and-scenario language, never code symbols like function names or file paths. Not for writing or running automated test code (pytest/jest), code review, or test-strategy docs.",

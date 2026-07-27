@@ -9,37 +9,43 @@
 
 | Skill | |
 |---|---|
-| [code-history](skills/code-history) | Trace git history of specific code — find when functions, patterns, or files were added, modified, or removed, and explain the intent behind each change. |
+| [code-history](skills/code-history) | **Trace git history of specific code — find when functions, patterns, or files were added, modified, or removed, and explain the intent behind each change.** |
 | | `npx skills add 2ykwang/agent-skills --skill code-history` |
 | | `claude plugin install code-history@2ykwang-agent-skills` |
-| [code-review-report](skills/code-review-report) | Turn code changes into a single-file HTML code review report — the diff plus context a diff can't show: design decisions, tradeoffs, unfinished work, and prioritized review points. |
+| [code-review-report](skills/code-review-report) | **Turn code changes into a single-file HTML code review report — the diff plus context a diff can't show: design decisions, tradeoffs, unfinished work, and prioritized review points.** |
 | | `npx skills add 2ykwang/agent-skills --skill code-review-report` |
 | | `claude plugin install code-review-report@2ykwang-agent-skills` |
-| [create-qa-list](skills/create-qa-list) | Turn code, specs, or the current conversation into a QA test-case list a non-developer can run — no code symbols, behavior-and-scenario language only. Export as CSV, a shareable HTML report, or both. |
+| [commit-fixup](skills/commit-fixup) | **Absorb uncommitted edits into the existing commits each one belongs to, via fixup commits and an autosquash rebase.** |
+| | `npx skills add 2ykwang/agent-skills --skill commit-fixup` |
+| | `claude plugin install commit-fixup@2ykwang-agent-skills` |
+| [commit-split](skills/commit-split) | **Split uncommitted changes into commits by context, down to hunk level within a single file.** |
+| | `npx skills add 2ykwang/agent-skills --skill commit-split` |
+| | `claude plugin install commit-split@2ykwang-agent-skills` |
+| [create-qa-list](skills/create-qa-list) | **Turn code, specs, or the current conversation into a QA test-case list a non-developer can run — no code symbols, behavior-and-scenario language only. Export as CSV, a shareable HTML report, or both.** |
 | | `npx skills add 2ykwang/agent-skills --skill create-qa-list` |
 | | `claude plugin install create-qa-list@2ykwang-agent-skills` |
-| [decision-board](skills/decision-board) | Render an interactive HTML board for the user to pick among many comparable options with previews side-by-side. Returns picks as a JSON file the agent can apply directly. |
+| [decision-board](skills/decision-board) | **Render an interactive HTML board for the user to pick among many comparable options with previews side-by-side. Returns picks as a JSON file the agent can apply directly.** |
 | | `npx skills add 2ykwang/agent-skills --skill decision-board` |
 | | `claude plugin install decision-board@2ykwang-agent-skills` |
-| [docs](skills/docs) | Write and maintain project documentation — `/docs write` creates or updates a doc, `/docs check` reports stale content, broken code references, and orphan files. |
+| [docs](skills/docs) | **Write and maintain project documentation — `/docs write` creates or updates a doc, `/docs check` reports stale content, broken code references, and orphan files.** |
 | | `npx skills add 2ykwang/agent-skills --skill docs` |
 | | `claude plugin install docs@2ykwang-agent-skills` |
-| [django-ticket-triage](skills/django-ticket-triage) | Analyze a Django Trac ticket and produce a triage recommendation report. |
+| [django-ticket-triage](skills/django-ticket-triage) | **Analyze a Django Trac ticket and produce a triage recommendation report.** |
 | | `npx skills add 2ykwang/agent-skills --skill django-ticket-triage` |
 | | `claude plugin install django-ticket-triage@2ykwang-agent-skills` |
-| [html-visual](skills/html-visual) | Generate interactive single-file HTML visualizations — UI mockups, ERDs, flowcharts, data charts. |
+| [html-visual](skills/html-visual) | **Generate interactive single-file HTML visualizations — UI mockups, ERDs, flowcharts, data charts.** |
 | | `npx skills add 2ykwang/agent-skills --skill html-visual` |
 | | `claude plugin install html-visual@2ykwang-agent-skills` |
-| [ralph-loop-template](skills/ralph-loop-template) | Generate Ralph Loop iteration checklists from plan files. Creates `PROMPT-*.md` files ready for `/ralph-loop`. |
+| [ralph-loop-template](skills/ralph-loop-template) | **Generate Ralph Loop iteration checklists from plan files. Creates `PROMPT-*.md` files ready for `/ralph-loop`.** |
 | | `npx skills add 2ykwang/agent-skills --skill ralph-loop-template` |
 | | `claude plugin install ralph-loop-template@2ykwang-agent-skills` |
-| [quick-pr](skills/quick-pr) | Split a minor change from the current work into a separate worktree and open a PR without interrupting your flow. Requires Claude Code. |
+| [quick-pr](skills/quick-pr) | **Split a minor change from the current work into a separate worktree and open a PR without interrupting your flow. Requires Claude Code.** |
 | | `npx skills add 2ykwang/agent-skills --skill quick-pr` |
 | | `claude plugin install quick-pr@2ykwang-agent-skills` |
-| [worth-building](skills/worth-building) | Decide how elaborate to build something — simple vs. robust — and get a right-sized, PoC-shaped proposal at that level, not over- or under-engineered. |
+| [worth-building](skills/worth-building) | **Decide how elaborate to build something — simple vs. robust — and get a right-sized, PoC-shaped proposal at that level, not over- or under-engineered.** |
 | | `npx skills add 2ykwang/agent-skills --skill worth-building` |
 | | `claude plugin install worth-building@2ykwang-agent-skills` |
-| [write-pr](skills/write-pr) | Analyzes git diff and commit history to write PR title and description based on the project's PR template. |
+| [write-pr](skills/write-pr) | **Analyzes git diff and commit history to write PR title and description based on the project's PR template.** |
 | | `npx skills add 2ykwang/agent-skills --skill write-pr` |
 | | `claude plugin install write-pr@2ykwang-agent-skills` |
 

@@ -1,0 +1,12 @@
+{
+  "name": "commit-split",
+  "version": "0.0.1",
+  "description": "Split a pile of uncommitted changes into several context-scoped commits. Analyzes the diff first, proposes logical groups and a commit count, and once the user confirms the granularity, stages per file \u2014 down to hunks inside a single file when needed \u2014 and commits with messages matching the repo's convention. Use on requests like 'split this into commits', 'commit by context', 'atomic commits', 'how should I split these changes', or when uncommitted work mixes several topics (feature + bugfix + config). Not for rewriting already-committed history (rebase, fixup, squash), and not for a single-topic change one commit covers.",
+  "author": {
+    "name": "2ykwang",
+    "url": "https://github.com/2ykwang"
+  },
+  "repository": "https://github.com/2ykwang/agent-skills",
+  "homepage": "https://github.com/2ykwang/agent-skills/tree/main/skills/commit-split",
+  "license": "MIT"
+}
