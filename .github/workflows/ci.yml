@@ -76,3 +76,55 @@ jobs:
             claude plugin install "$plugin@$marketplace"
           done
           claude plugin list
+
+  # The READMEs advertise two install paths. install-smoke covers
+  # `claude plugin install`; this one covers `npx skills add`.
+  skills-cli:
+    name: Install via skills CLI
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      # The CLI accepts a local path, so this exercises the checked-out commit
+      # rather than whatever already sits on the default branch. Installing
+      # outside the workspace keeps the generated `.agents/` tree out of it.
+      - name: Install every skill
+        working-directory: ${{ runner.temp }}
+        run: npx -y skills add "$GITHUB_WORKSPACE" --all
+      - name: Every skill in the marketplace was installed
+        working-directory: ${{ runner.temp }}
+        run: |
+          expected=$(jq -r '.plugins | length' "$GITHUB_WORKSPACE/.claude-plugin/marketplace.json")
+          installed=$(find .agents/skills -name SKILL.md | wc -l)
+          echo "marketplace: $expected, installed: $installed"
+          [ "$installed" -eq "$expected" ]
+
+  summary:
+    name: Summary
+    runs-on: ubuntu-latest
+    needs: [validate, scripts-test, generated-in-sync, manifests, install-smoke, skills-cli]
+    if: always()
+    permissions:
+      contents: read
+    steps:
+      # Job ids containing a hyphen need bracket notation in expressions.
+      - name: Write the result table
+        run: |
+          {
+            echo "## CI results"
+            echo
+            echo "| Check | Result |"
+            echo "|---|---|"
+            echo "| Skill structure | ${{ needs.validate.result }} |"
+            echo "| Script tests | ${{ needs['scripts-test'].result }} |"
+            echo "| plugins/ in sync with skills/ | ${{ needs['generated-in-sync'].result }} |"
+            echo "| Plugin manifests | ${{ needs.manifests.result }} |"
+            echo "| Install via claude plugin | ${{ needs['install-smoke'].result }} |"
+            echo "| Install via skills CLI | ${{ needs['skills-cli'].result }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+      # Without this the run reports success whenever every other job failed
+      # but writing the summary itself worked.
+      - name: Fail the run if any check failed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
