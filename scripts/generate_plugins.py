@@ -119,7 +119,7 @@ def main():
         plugin_skills_dir = plugin_path / "skills"
         plugin_skills_dir.mkdir()
         for item in skill_path.iterdir():
-            if item.name == "README.md":
+            if item.name.startswith("README"):
                 continue
             dest = plugin_skills_dir / item.name
             if item.is_dir():
@@ -127,11 +127,11 @@ def main():
             else:
                 shutil.copy2(item, dest)
 
-        # README.md — use hand-written one if exists, otherwise generate
-        custom_readme = skill_path / "README.md"
-        if custom_readme.exists():
-            shutil.copy2(custom_readme, plugin_path / "README.md")
-        else:
+        # README.md and translations (README.<lang>.md) — hand-written ones win,
+        # otherwise generate an English README.
+        for readme in skill_path.glob("README*.md"):
+            shutil.copy2(readme, plugin_path / readme.name)
+        if not (plugin_path / "README.md").exists():
             requires = fm.get("requires", "")
             (plugin_path / "README.md").write_text(
                 generate_readme(name, description, requires)
