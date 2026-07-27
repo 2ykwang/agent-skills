@@ -34,3 +34,45 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m unittest tests/test_scripts.py -v
+
+  generated-in-sync:
+    name: plugins/ in sync with skills/
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/generate_plugins.py
+      # `git add -A` first: a new skill produces untracked plugins/ files that
+      # a plain `git diff` would not see.
+      - run: git add -A && git diff --cached --exit-code
+
+  manifests:
+    name: Validate plugin manifests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm i -g @anthropic-ai/claude-code
+      - run: claude plugin validate . --strict
+
+  install-smoke:
+    name: Install every plugin
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm i -g @anthropic-ai/claude-code
+      # `marketplace add` rejects a bare "."; it needs ./path or an absolute path.
+      - run: |
+          marketplace=$(jq -r '.name' .claude-plugin/marketplace.json)
+          claude plugin marketplace add "$GITHUB_WORKSPACE"
+          for plugin in $(jq -r '.plugins[].name' .claude-plugin/marketplace.json); do
+            claude plugin install "$plugin@$marketplace"
+          done
+          claude plugin list
