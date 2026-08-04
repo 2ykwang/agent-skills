@@ -1,6 +1,6 @@
 {
   "name": "instruction-eval",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Change one condition an agent runs under (instruction text, the reference material instructions point at, MCP tools and permissions, hooks, skill files), then run the same prompts before and after, several times each, to see what actually changes. Produces an HTML report showing both arms' answers side by side. Use when deciding whether to add a rule, when you need evidence that an existing rule can be deleted, when picking between two wordings of the same rule, or when checking whether material you placed is actually being read. Triggers on 'does this rule do anything', 'compare before and after adding this', 'can I drop this', 'difference with and without this', 'run an A/B'. Not for application code changes or anything automated tests already verify. Built on Claude Code: it spawns `claude -p` subprocesses to run both arms.",
   "author": {
     "name": "2ykwang",

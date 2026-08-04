@@ -104,13 +104,17 @@ def main() -> None:
     # a Python string, Python eats one level of backslashes from the HTML/CSS/JS, so
     # regexes and newline escapes break silently. Python's syntax check won't catch it
     # and the page just comes out empty.
-    template = (Path(__file__).parent / "report_template.html").read_text()
+    scripts = Path(__file__).parent
+    template = (scripts / "report_template.html").read_text()
+    markdown_it = (scripts / "vendor" / "markdown-it.umd.min.js").read_text()
+    if "</script" in markdown_it.lower():
+        raise ValueError("vendored markdown-it bundle contains an unsafe </script sequence")
 
     out = Path(args.out) if args.out else work / "report.html"
     out.write_text(
-        template.replace("__DATA__", payload).replace(
-            "__TITLE__", html.escape(insights.get("title") or "Condition A/B")
-        )
+        template.replace("__MARKDOWN_IT__", markdown_it)
+        .replace("__DATA__", payload)
+        .replace("__TITLE__", html.escape(insights.get("title") or "Condition A/B"))
     )
 
     missing = [name for key, name in INSIGHT_FIELDS.items() if not insights.get(key)]
