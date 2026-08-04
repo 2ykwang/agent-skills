@@ -36,6 +36,9 @@
 | [html-visual](skills/html-visual/README.ko.md) | **UI 목업, ERD, 플로우차트, 데이터 차트를 HTML 파일 한 장으로 만들고 클릭하고 끌어볼 수 있게 합니다.** |
 | | `npx skills add 2ykwang/agent-skills --skill html-visual` |
 | | `claude plugin install html-visual@2ykwang-agent-skills` |
+| [instruction-eval](skills/instruction-eval/README.ko.md) | **에이전트가 놓인 조건 하나(규칙, 참조 문서, 훅)를 바꾸고 같은 프롬프트를 변경 전후에서 돌려 실제로 뭐가 달라지는지 봅니다. 두 답변을 나란히 놓은 HTML 리포트가 나옵니다. Claude Code 기반입니다.** |
+| | `npx skills add 2ykwang/agent-skills --skill instruction-eval` |
+| | `claude plugin install instruction-eval@2ykwang-agent-skills` |
 | [ralph-loop-template](skills/ralph-loop-template/README.ko.md) | **계획 파일에서 Ralph Loop이 한 번에 한 단계씩 처리할 체크리스트를 뽑아냅니다. `/ralph-loop`에 바로 넣을 수 있는 `PROMPT-*.md` 파일이 나옵니다.** |
 | | `npx skills add 2ykwang/agent-skills --skill ralph-loop-template` |
 | | `claude plugin install ralph-loop-template@2ykwang-agent-skills` |

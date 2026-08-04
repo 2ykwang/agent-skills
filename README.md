@@ -36,6 +36,9 @@
 | [html-visual](skills/html-visual) | **Generate interactive single-file HTML visualizations — UI mockups, ERDs, flowcharts, data charts.** |
 | | `npx skills add 2ykwang/agent-skills --skill html-visual` |
 | | `claude plugin install html-visual@2ykwang-agent-skills` |
+| [instruction-eval](skills/instruction-eval) | **Change one condition an agent runs under, such as a rule, a reference doc, or a hook, then run the same prompts before and after to see what actually changes. Answers side by side in an HTML report. Built on Claude Code.** |
+| | `npx skills add 2ykwang/agent-skills --skill instruction-eval` |
+| | `claude plugin install instruction-eval@2ykwang-agent-skills` |
 | [ralph-loop-template](skills/ralph-loop-template) | **Generate Ralph Loop iteration checklists from plan files. Creates `PROMPT-*.md` files ready for `/ralph-loop`.** |
 | | `npx skills add 2ykwang/agent-skills --skill ralph-loop-template` |
 | | `claude plugin install ralph-loop-template@2ykwang-agent-skills` |

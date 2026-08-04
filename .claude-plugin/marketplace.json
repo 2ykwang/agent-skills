@@ -71,6 +71,13 @@
       "category": "design-frontend"
     },
     {
+      "name": "instruction-eval",
+      "source": "./plugins/instruction-eval",
+      "description": "Change one condition an agent runs under (instruction text, the reference material instructions point at, MCP tools and permissions, hooks, skill files), then run the same prompts before and after, several times each, to see what actually changes. Produces an HTML report showing both arms' answers side by side. Use when deciding whether to add a rule, when you need evidence that an existing rule can be deleted, when picking between two wordings of the same rule, or when checking whether material you placed is actually being read. Triggers on 'does this rule do anything', 'compare before and after adding this', 'can I drop this', 'difference with and without this', 'run an A/B'. Not for application code changes or anything automated tests already verify. Built on Claude Code: it spawns `claude -p` subprocesses to run both arms.",
+      "version": "0.5.0",
+      "category": "productivity"
+    },
+    {
       "name": "quick-pr",
       "source": "./plugins/quick-pr",
       "description": "Split a minor change from the current work into a separate worktree and open a PR without interrupting your flow. Use when an unrelated small fix (typo, lint rule, config tweak) is sitting in a feature branch and the user wants it shipped on its own \u2014 \\\"quick PR\\\", \\\"split this out\\\", \\\"ship this separately\\\". Requires Claude Code (uses EnterWorktree, ExitWorktree, AskUserQuestion).",
